@@ -131,68 +131,113 @@
   <ul id="addedList"></ul>
 
   <script>
-// WhatsApp Sharing and Link Generation
-const shareWhatsAppButton = document.createElement("button");
-shareWhatsAppButton.textContent = "Share on WhatsApp";
-document.body.appendChild(shareWhatsAppButton);
+<script>
+  // Your existing script here...
 
-const generateLinkButton = document.createElement("button");
-generateLinkButton.textContent = "Generate Sharable Link";
-document.body.appendChild(generateLinkButton);
+  // Advanced Sharing System with Icons
+  const shareContainer = document.createElement("div");
+  shareContainer.style.marginTop = "20px";
+  shareContainer.style.display = "flex";
+  shareContainer.style.gap = "15px"; // Add spacing between buttons
+  
+  const shareWhatsAppButton = document.createElement("button");
+  shareWhatsAppButton.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp Logo" style="width:20px; height:20px; vertical-align:middle; margin-right:5px;"> Share on WhatsApp`;
+  shareWhatsAppButton.style.display = "flex";
+  shareWhatsAppButton.style.alignItems = "center";
+  shareWhatsAppButton.style.gap = "10px";
+  shareWhatsAppButton.style.padding = "10px";
 
-const sharableLinkInput = document.createElement("textarea");
-sharableLinkInput.setAttribute("readonly", true);
-sharableLinkInput.setAttribute("rows", "2");
-sharableLinkInput.style.width = "100%";
-sharableLinkInput.style.marginTop = "10px";
-document.body.appendChild(sharableLinkInput);
+  const generateLinkButton = document.createElement("button");
+  generateLinkButton.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Simpleicons_Business_link.svg/1024px-Simpleicons_Business_link.svg.png" alt="Link Logo" style="width:20px; height:20px; vertical-align:middle; margin-right:5px;"> Sharable Link`;
+  generateLinkButton.style.display = "flex";
+  generateLinkButton.style.alignItems = "center";
+  generateLinkButton.style.gap = "10px";
+  generateLinkButton.style.padding = "10px";
 
-// Function to get the added list as text
-function getAddedListText() {
-  return addedItems
-    .map((item) => `${item.quantity} ${item.unit} ${item.name}`)
-    .join("\n");
-}
+  const copyLinkButton = document.createElement("button");
+  copyLinkButton.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Copy-icon.svg" alt="Copy Logo" style="width:20px; height:20px; vertical-align:middle; margin-right:5px;"> Copy Link`;
+  copyLinkButton.style.display = "none"; // Initially hidden
+  copyLinkButton.style.alignItems = "center";
+  copyLinkButton.style.gap = "10px";
+  copyLinkButton.style.padding = "10px";
 
-// WhatsApp Sharing
-shareWhatsAppButton.addEventListener("click", () => {
-  const listText = getAddedListText();
-  if (!listText) {
-    alert("Your list is empty. Add some items first.");
-    return;
+  const sharableLinkInput = document.createElement("textarea");
+  sharableLinkInput.setAttribute("readonly", true);
+  sharableLinkInput.setAttribute("rows", "2");
+  sharableLinkInput.style.width = "100%";
+  sharableLinkInput.style.marginTop = "10px";
+  sharableLinkInput.style.display = "none"; // Initially hidden
+  sharableLinkInput.style.padding = "10px";
+
+  shareContainer.appendChild(shareWhatsAppButton);
+  shareContainer.appendChild(generateLinkButton);
+  shareContainer.appendChild(copyLinkButton);
+  document.body.appendChild(shareContainer);
+  document.body.appendChild(sharableLinkInput);
+
+  // Function to get the added list as a JSON string
+  function getAddedListJson() {
+    return JSON.stringify(addedItems.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+      unit: item.unit,
+    })));
   }
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
-    "Here's my grocery list:\n" + listText
-  )}`;
-  window.open(whatsappUrl, "_blank");
-});
 
-// Generate Sharable Link
-generateLinkButton.addEventListener("click", () => {
-  const listText = getAddedListText();
-  if (!listText) {
-    alert("Your list is empty. Add some items first.");
-    return;
-  }
-  const encodedList = encodeURIComponent(listText);
-  const link = `${window.location.origin}${window.location.pathname}?list=${encodedList}`;
-  sharableLinkInput.value = link;
-  alert("Sharable link generated! Copy it below.");
-});
-
-// Load List from Sharable Link
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has("list")) {
-  const listFromUrl = decodeURIComponent(urlParams.get("list"));
-  const listItems = listFromUrl.split("\n").map((line) => {
-    const [quantity, unit, ...nameParts] = line.split(" ");
-    const name = nameParts.join(" ");
-    return { name, quantity: parseFloat(quantity), unit };
+  // WhatsApp Sharing
+  shareWhatsAppButton.addEventListener("click", () => {
+    if (addedItems.length === 0) {
+      alert("Your list is empty. Add some items first.");
+      return;
+    }
+    const listText = addedItems.map((item) => `${item.quantity} ${item.unit} ${item.name}`).join("\n");
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+      "Here's my grocery list:\n" + listText
+    )}`;
+    window.open(whatsappUrl, "_blank");
   });
-  addedItems = listItems;
-  saveToStorage("groceryList", addedItems);
-  renderAddedList();
-}
+
+  // Generate Sharable Link
+  generateLinkButton.addEventListener("click", () => {
+    if (addedItems.length === 0) {
+      alert("Your list is empty. Add some items first.");
+      return;
+    }
+    const listJson = getAddedListJson();
+    const encodedList = encodeURIComponent(listJson);
+    const link = `${window.location.origin}${window.location.pathname}?list=${encodedList}`;
+    sharableLinkInput.value = link;
+    sharableLinkInput.style.display = "block";
+    copyLinkButton.style.display = "block";
+    alert("Sharable link generated! Copy it below.");
+  });
+
+  // Copy Link to Clipboard
+  copyLinkButton.addEventListener("click", () => {
+    sharableLinkInput.select();
+    document.execCommand("copy");
+    alert("Link copied to clipboard!");
+  });
+
+  // Load List from Shared Link
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has("list")) {
+    try {
+      const listJson = decodeURIComponent(urlParams.get("list"));
+      const listFromUrl = JSON.parse(listJson);
+      addedItems = listFromUrl.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        unit: item.unit,
+      }));
+      saveToStorage("groceryList", addedItems);
+      renderAddedList();
+    } catch (e) {
+      console.error("Error parsing shared list data:", e);
+      alert("Failed to load the shared list. The data might be corrupted.");
+    }
+  }
+</script>
 
     
    const items = [
