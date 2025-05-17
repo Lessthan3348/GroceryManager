@@ -131,15 +131,12 @@
   <ul id="addedList"></ul>
 
   <script>
-  
-  // Your existing script here...
-
   // Advanced Sharing System with Icons
   const shareContainer = document.createElement("div");
   shareContainer.style.marginTop = "20px";
   shareContainer.style.display = "flex";
   shareContainer.style.gap = "15px"; // Add spacing between buttons
-  
+
   const shareWhatsAppButton = document.createElement("button");
   shareWhatsAppButton.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp Logo" style="width:20px; height:20px; vertical-align:middle; margin-right:5px;"> Share on WhatsApp`;
   shareWhatsAppButton.style.display = "flex";
@@ -177,11 +174,13 @@
 
   // Function to get the added list as a JSON string
   function getAddedListJson() {
-    return JSON.stringify(addedItems.map((item) => ({
-      name: item.name,
-      quantity: item.quantity,
-      unit: item.unit,
-    })));
+    return JSON.stringify(
+      addedItems.map((item) => ({
+        name: item.name,
+        quantity: item.quantity,
+        unit: item.unit,
+      }))
+    );
   }
 
   // WhatsApp Sharing
@@ -190,7 +189,9 @@
       alert("Your list is empty. Add some items first.");
       return;
     }
-    const listText = addedItems.map((item) => `${item.quantity} ${item.unit} ${item.name}`).join("\n");
+    const listText = addedItems
+      .map((item) => `${item.quantity} ${item.unit} ${item.name}`)
+      .join("\n");
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
       "Here's my grocery list:\n" + listText
     )}`;
@@ -203,13 +204,18 @@
       alert("Your list is empty. Add some items first.");
       return;
     }
-    const listJson = getAddedListJson();
-    const encodedList = encodeURIComponent(listJson);
-    const link = `${window.location.origin}${window.location.pathname}?list=${encodedList}`;
-    sharableLinkInput.value = link;
-    sharableLinkInput.style.display = "block";
-    copyLinkButton.style.display = "block";
-    alert("Sharable link generated! Copy it below.");
+    try {
+      const listJson = getAddedListJson();
+      const encodedList = btoa(listJson); // Base64 encode the list
+      const link = `${window.location.origin}${window.location.pathname}?list=${encodedList}`;
+      sharableLinkInput.value = link;
+      sharableLinkInput.style.display = "block";
+      copyLinkButton.style.display = "block";
+      alert("Sharable link generated! Copy it below.");
+    } catch (error) {
+      console.error("Error generating link:", error);
+      alert("Failed to generate the link. Please try again.");
+    }
   });
 
   // Copy Link to Clipboard
@@ -223,7 +229,8 @@
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has("list")) {
     try {
-      const listJson = decodeURIComponent(urlParams.get("list"));
+      const encodedList = urlParams.get("list");
+      const listJson = atob(encodedList); // Base64 decode the list
       const listFromUrl = JSON.parse(listJson);
       addedItems = listFromUrl.map((item) => ({
         name: item.name,
@@ -232,9 +239,11 @@
       }));
       saveToStorage("groceryList", addedItems);
       renderAddedList();
-    } catch (e) {
-      console.error("Error parsing shared list data:", e);
-      alert("Failed to load the shared list. The data might be corrupted.");
+    } catch (error) {
+      console.error("Error parsing shared list data:", error);
+      alert(
+        "Failed to load the shared list. The data might be corrupted or invalid."
+      );
     }
   }
 
