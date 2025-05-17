@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Grocery Manager</title>
   <style>
     body {
@@ -13,6 +13,7 @@
       background-position: center;
       color: #222;
       transition: background-color 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
     }
     h1 {
       color: #ff5722;
@@ -21,49 +22,35 @@
     }
     input, button {
       margin: 10px 0;
-      padding: 14px 18px;
+      padding: 15px 12px;
       border: none;
-      border-radius: 12px;
-      font-size: 1rem;
+      border-radius: 5px;
+      font-size: 1.1rem;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      transition: all 0.3s ease;
-      font-weight: 600;
-      user-select: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     input {
       width: 100%;
-      border: 1.5px solid #ccc;
+      border: 1px solid #ccc;
       box-sizing: border-box;
-      background: #fff;
-      color: #222;
-    }
-    input:focus {
-      border-color: #ff5722;
-      box-shadow: 0 0 8px rgba(255,87,34,0.6);
-      outline: none;
+      font-size: 1rem;
     }
     button {
       background-color: #ff5722;
       color: white;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      box-shadow: 0 4px 12px rgba(255, 87, 34, 0.4);
+      font-weight: bold;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      user-select: none;
     }
-    button:hover, button:focus {
+    button:hover {
       background-color: #e64a19;
-      box-shadow: 0 6px 16px rgba(230, 74, 25, 0.7);
-      outline: none;
+      box-shadow: 0 4px 8px rgba(230, 74, 25, 0.4);
       transform: scale(1.05);
-    }
-    button:active {
-      transform: scale(0.98);
-      box-shadow: 0 2px 6px rgba(230, 74, 25, 0.8);
     }
     ul {
       list-style-type: none;
       padding: 0;
+      margin: 10px 0;
     }
     li {
       background: rgba(255, 255, 255, 0.9);
@@ -71,18 +58,41 @@
       padding: 12px 15px;
       border-radius: 5px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
+      gap: 15px;
+      flex-wrap: nowrap;
+      word-break: break-word;
+    }
+    li span {
+      flex: 1 1 40%;
+      font-weight: 600;
+      white-space: normal;
+      word-break: break-word;
+    }
+    li .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex: 1 1 60%;
+      flex-wrap: nowrap;
     }
     li input[type="number"],
     li input[type="text"] {
       width: 70px;
       padding: 8px;
-      margin: 5px 8px;
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 1rem;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    li button {
+      min-width: 100px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      border-radius: 10px;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
     #darkModeToggle {
       background-color: #444;
@@ -122,6 +132,8 @@
     body.dark button:hover {
       background-color: #ff5722;
       color: white;
+      box-shadow: 0 4px 8px rgba(255, 87, 34, 0.4);
+      transform: scale(1.05);
     }
     body.dark li {
       background: #222;
@@ -137,26 +149,33 @@
       background-color: #222;
       color: #ddd;
     }
-    /* Responsive adjustments */
+    /* Responsive */
     @media (max-width: 600px) {
-      input, button {
-        padding: 12px 14px;
+      li {
+        flex-wrap: wrap;
+      }
+      li span, li .controls {
+        flex: 1 1 100%;
+      }
+      li .controls {
+        justify-content: flex-start;
+        gap: 8px;
+      }
+      li input[type="number"],
+      li input[type="text"] {
+        width: 60px;
+        padding: 6px;
         font-size: 0.9rem;
-        border-radius: 10px;
       }
-      button {
-        width: 100%;
-        margin-top: 8px;
+      li button {
+        min-width: 90px;
+        padding: 8px 10px;
+        font-size: 0.9rem;
       }
-    }
-    /* Buttons inside list items for better spacing */
-    li button {
-      min-width: 100px;
-      margin-left: 10px;
-      flex-shrink: 0;
-      padding: 10px 14px;
-      font-size: 0.95rem;
-      border-radius: 10px;
+      input, button#darkModeToggle, #toggleAllBtn, #shareAllBtn {
+        font-size: 1rem;
+        padding: 12px 10px;
+      }
     }
   </style>
 </head>
@@ -164,17 +183,18 @@
   <h1>Grocery Manager</h1>
   <button id="darkModeToggle">Toggle Dark Mode</button>
   <div style="position: relative;">
-    <input type="text" id="searchBar" placeholder="Search for items..." autocomplete="off"/>
-    <div id="autocomplete" style="display:none;"></div>
+    <input type="text" id="searchBar" placeholder="Search for items..." autocomplete="off" />
+    <div id="autocomplete"></div>
   </div>
   <button id="toggleAllBtn">Show All Items</button>
   <ul id="itemsList"></ul>
   <h2>Your List</h2>
   <ul id="addedList"></ul>
+  <button id="shareAllBtn" style="margin-top:10px; background-color: #4CAF50;">Share All</button>
 
   <script>
     const items = [
-      { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
+      { name: "Påse Napolitana salads mix", quantity: 1, unit: "påse" },
       { name: "Tomat", quantity: 1, unit: "kg" },
       { name: "Championer", quantity: 1, unit: "kg" },
       { name: "Rödlök", quantity: 1, unit: "kg" },
@@ -227,151 +247,187 @@
     const addedList = document.getElementById("addedList");
     const toggleAllBtn = document.getElementById("toggleAllBtn");
     const darkModeToggle = document.getElementById("darkModeToggle");
+    const shareAllBtn = document.getElementById("shareAllBtn");
 
-    let showingAll = false;
+    let showAll = false;
     let addedItems = [];
 
+    // Render full items list or filtered
     function renderItems(filteredItems) {
       itemsList.innerHTML = "";
       filteredItems.forEach((item) => {
         const li = document.createElement("li");
-        li.innerHTML = `
-          <span>${item.name}</span>
-          <input type="number" min="0" step="any" value="${item.quantity}" />
-          <input type="text" value="${item.unit}" />
-          <button class="addBtn">Add</button>
-        `;
-        const addBtn = li.querySelector(".addBtn");
-        addBtn.addEventListener("click", () => {
-          const qtyInput = li.querySelector("input[type='number']");
-          const unitInput = li.querySelector("input[type='text']");
-          if(qtyInput.value <= 0) return alert("Quantity must be greater than 0");
-          addItemToList(item.name, parseFloat(qtyInput.value), unitInput.value);
-        });
+        li.style.flexWrap = "wrap";
+        li.style.justifyContent = "space-between";
+
+        const span = document.createElement("span");
+        span.textContent = item.name;
+        span.style.flex = "1 1 60%";
+        span.style.fontWeight = "600";
+
+        const addBtn = document.createElement("button");
+        addBtn.textContent = "Add";
+        addBtn.onclick = () => addItem(item);
+
+        li.appendChild(span);
+        li.appendChild(addBtn);
         itemsList.appendChild(li);
       });
     }
 
-    function addItemToList(name, quantity, unit) {
-      const index = addedItems.findIndex(i => i.name === name);
-      if (index === -1) {
-        addedItems.push({ name, quantity, unit });
-      } else {
-        addedItems[index].quantity += quantity;
-        addedItems[index].unit = unit;
+    function addItem(item) {
+      const exists = addedItems.find((i) => i.name === item.name);
+      if (!exists) {
+        addedItems.push({ ...item });
       }
       renderAddedList();
+    }
+
+    function removeItem(name) {
+      addedItems = addedItems.filter((item) => item.name !== name);
+      renderAddedList();
+    }
+
+    function updateItemDetails(index, field, value) {
+      if (field === "quantity" && isNaN(value)) return;
+      addedItems[index][field] = value;
+      renderAddedList();
+    }
+
+    function shareItemOnWhatsApp(item) {
+      const text = `${item.quantity} ${item.unit} ${item.name}`;
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, "_blank");
+    }
+
+    function shareItemOnFacebook(item) {
+      // Facebook does not support direct text share in URL,
+      // so we can share a dummy URL with quote param containing text
+      const text = `${item.quantity} ${item.unit} ${item.name}`;
+      const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent("https://example.com")}&quote=${encodeURIComponent(text)}`;
+      window.open(url, "_blank");
+    }
+
+    function copyItemToClipboard(item) {
+      const text = `${item.quantity} ${item.unit} ${item.name}`;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Copied: " + text);
+      });
+    }
+
+    function shareAllItems() {
+      if (addedItems.length === 0) {
+        alert("No items to share!");
+        return;
+      }
+      const text = addedItems
+        .map((item) => `${item.quantity} ${item.unit} ${item.name}`)
+        .join("\n");
+      // Share using WhatsApp as example, can be adjusted
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, "_blank");
     }
 
     function renderAddedList() {
       addedList.innerHTML = "";
       addedItems.forEach((item, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `
-          <span>${item.name}</span>
-          <input type="number" min="0" step="any" value="${item.quantity}" />
-          <input type="text" value="${item.unit}" />
-          <button class="removeBtn">Remove</button>
-          <button class="shareBtn" data-platform="whatsapp">Share WhatsApp</button>
-          <button class="shareBtn" data-platform="facebook">Share Facebook</button>
-          <button class="copyBtn">Copy</button>
-        `;
-        const removeBtn = li.querySelector(".removeBtn");
-        const shareBtns = li.querySelectorAll(".shareBtn");
-        const copyBtn = li.querySelector(".copyBtn");
-        const qtyInput = li.querySelector("input[type='number']");
-        const unitInput = li.querySelector("input[type='text']");
 
-        removeBtn.addEventListener("click", () => {
-          addedItems.splice(index, 1);
-          renderAddedList();
-        });
+        const name = document.createElement("span");
+        name.textContent = item.name;
 
-        qtyInput.addEventListener("change", () => {
-          if (qtyInput.value <= 0) {
-            alert("Quantity must be greater than 0");
-            qtyInput.value = item.quantity;
-            return;
-          }
-          addedItems[index].quantity = parseFloat(qtyInput.value);
-        });
+        const controls = document.createElement("div");
+        controls.className = "controls";
 
-        unitInput.addEventListener("change", () => {
-          addedItems[index].unit = unitInput.value;
-        });
+        const quantityInput = document.createElement("input");
+        quantityInput.type = "number";
+        quantityInput.min = "0";
+        quantityInput.value = item.quantity;
+        quantityInput.onchange = (e) =>
+          updateItemDetails(index, "quantity", parseFloat(e.target.value));
 
-        shareBtns.forEach(button => {
-          button.addEventListener("click", () => {
-            shareItem(item, button.dataset.platform);
-          });
-        });
+        const unitInput = document.createElement("input");
+        unitInput.type = "text";
+        unitInput.value = item.unit;
+        unitInput.onchange = (e) => updateItemDetails(index, "unit", e.target.value);
 
-        copyBtn.addEventListener("click", () => {
-          copyToClipboard(`${item.name} - ${item.quantity} ${item.unit}`);
-          alert("Copied to clipboard!");
-        });
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "Remove";
+        removeBtn.onclick = () => removeItem(item.name);
+
+        const shareWhatsAppBtn = document.createElement("button");
+        shareWhatsAppBtn.textContent = "WhatsApp";
+        shareWhatsAppBtn.onclick = () => shareItemOnWhatsApp(item);
+
+        const shareFacebookBtn = document.createElement("button");
+        shareFacebookBtn.textContent = "Facebook";
+        shareFacebookBtn.onclick = () => shareItemOnFacebook(item);
+
+        const copyBtn = document.createElement("button");
+        copyBtn.textContent = "Copy";
+        copyBtn.onclick = () => copyItemToClipboard(item);
+
+        controls.appendChild(quantityInput);
+        controls.appendChild(unitInput);
+        controls.appendChild(removeBtn);
+        controls.appendChild(shareWhatsAppBtn);
+        controls.appendChild(shareFacebookBtn);
+        controls.appendChild(copyBtn);
+
+        li.appendChild(name);
+        li.appendChild(controls);
 
         addedList.appendChild(li);
       });
     }
 
-    function shareItem(item, platform) {
-      const text = encodeURIComponent(`${item.name} - ${item.quantity} ${item.unit}`);
-      let url = "";
-      if (platform === "whatsapp") {
-        url = `https://wa.me/?text=${text}`;
-      } else if (platform === "facebook") {
-        url = `https://www.facebook.com/sharer/sharer.php?u=&quote=${text}`;
-      }
-      window.open(url, "_blank");
-    }
-
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text);
-    }
-
+    // Search & Autocomplete
     searchBar.addEventListener("input", () => {
-      const query = searchBar.value.toLowerCase();
+      const query = searchBar.value.trim().toLowerCase();
       if (!query) {
-        autocomplete.style.display = "none";
+        autocomplete.innerHTML = "";
+        itemsList.innerHTML = "";
         return;
       }
-      const filtered = items.filter(i => i.name.toLowerCase().includes(query));
+      const filtered = items.filter((item) =>
+        item.name.toLowerCase().includes(query)
+      );
       autocomplete.innerHTML = "";
-      filtered.forEach(item => {
+      filtered.forEach((item) => {
         const div = document.createElement("div");
         div.textContent = item.name;
-        div.addEventListener("click", () => {
-          searchBar.value = item.name;
-          autocomplete.style.display = "none";
-          renderItems([item]);
-        });
+        div.onclick = () => {
+          addItem(item);
+          searchBar.value = "";
+          autocomplete.innerHTML = "";
+        };
         autocomplete.appendChild(div);
       });
-      autocomplete.style.display = filtered.length ? "block" : "none";
+      renderItems(filtered);
     });
 
-    toggleAllBtn.addEventListener("click", () => {
-      showingAll = !showingAll;
-      toggleAllBtn.textContent = showingAll ? "Hide All Items" : "Show All Items";
-      if (showingAll) {
+    // Toggle all items
+    toggleAllBtn.onclick = () => {
+      showAll = !showAll;
+      toggleAllBtn.textContent = showAll ? "Hide All Items" : "Show All Items";
+      if (showAll) {
         renderItems(items);
       } else {
-        renderItems([]);
+        itemsList.innerHTML = "";
       }
-    });
+    };
 
-    darkModeToggle.addEventListener("click", () => {
+    darkModeToggle.onclick = () => {
       document.body.classList.toggle("dark");
-    });
+    };
 
-    // Initialize with empty items list
-    renderItems([]);
+    shareAllBtn.onclick = shareAllItems;
+
+    // Initial empty render
     renderAddedList();
   </script>
 </body>
 </html>
-
 </html>
 
 
