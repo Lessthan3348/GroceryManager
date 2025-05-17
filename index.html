@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grocery List</title>
+<title>Grocery List / Inköpslista</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
@@ -37,13 +37,21 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
   header h1 {
     margin: 0;
     font-weight: 700;
     font-size: 2rem;
+    flex: 1 1 auto;
   }
-  button#darkModeToggle {
+  #buttonGroup {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  button {
     background: #007bff;
     color: white;
     border: none;
@@ -54,7 +62,7 @@
     box-shadow: 0 4px 10px rgb(0 123 255 / 0.5);
     transition: background-color 0.3s, transform 0.3s;
   }
-  button#darkModeToggle:hover {
+  button:hover {
     background: #0056b3;
     transform: scale(1.1);
   }
@@ -187,29 +195,44 @@
     background: rgba(255,255,255,0.3);
   }
 
-  /* Share Buttons */
+  /* Share Buttons with SVG icons */
   .share-buttons {
     display: flex;
     justify-content: center;
     margin-top: 1rem;
-    gap: 1rem;
+    gap: 1.5rem;
     flex-wrap: wrap;
   }
   .share-buttons button {
-    background: none;
+    background: transparent;
     border: none;
     cursor: pointer;
     transition: transform 0.3s;
-    font-size: 1.6rem;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .share-buttons button:hover {
     transform: scale(1.3);
   }
-  /* Brand colors for share icons */
-  .share-whatsapp { color: #25D366; }
-  .share-facebook { color: #1877F2; }
-  .share-twitter { color: #1DA1F2; }
-  .share-email { color: #D44638; }
+
+  /* Color fills for each brand */
+  .share-whatsapp svg path {
+    fill: #25D366;
+  }
+  .share-facebook svg path {
+    fill: #1877F2;
+  }
+  .share-twitter svg path {
+    fill: #1DA1F2;
+  }
+  .share-email svg path {
+    fill: #D44638;
+  }
 
   /* Responsive layout */
   @media (max-width: 800px) {
@@ -223,228 +246,221 @@
     li.grocery-item span {
       flex: 1 1 auto;
     }
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    #buttonGroup {
+      width: 100%;
+      justify-content: flex-start;
+    }
   }
 </style>
 </head>
 <body>
 <div class="container">
   <header>
-    <h1>Min inköpslista</h1>
-    <button id="darkModeToggle" aria-pressed="false" aria-label="Toggle mörkt läge">Mörkt läge</button>
+    <h1 id="pageTitle">Min inköpslista</h1>
+    <div id="buttonGroup">
+      <button id="langToggle" aria-label="Byt språk" title="Byt språk">EN</button>
+      <button id="darkModeToggle" aria-pressed="false" aria-label="Toggle mörkt läge">Mörkt läge</button>
+    </div>
   </header>
 
   <main>
     <section aria-label="Tillgängliga produkter">
-      <h2>Välj produkter</h2>
+      <h2 id="chooseTitle">Välj produkter</h2>
       <ul id="items" role="list"></ul>
     </section>
 
     <section aria-label="Din inköpslista">
-      <h2>Din lista</h2>
+      <h2 id="listTitle">Din lista</h2>
       <ul id="groceryList" role="list"></ul>
 
       <div class="share-buttons" aria-label="Dela din inköpslista">
-        <button class="share-whatsapp" aria-label="Dela via WhatsApp" title="WhatsApp">📱</button>
-        <button class="share-facebook" aria-label="Dela via Facebook" title="Facebook">📘</button>
-        <button class="share-twitter" aria-label="Dela via Twitter" title="Twitter">🐦</button>
-        <button class="share-email" aria-label="Dela via E-post" title="E-post">✉️</button>
+        <button class="share-whatsapp" aria-label="Dela via WhatsApp" title="WhatsApp" tabindex="0" role="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path d="M20.52 3.478A11.835 11.835 0 0012.002.02C6.157.02 1.5 4.68 1.5 10.528c0 1.836.507 3.632 1.464 5.226L.5 23.5l7.958-2.056a10.525 10.525 0 004.538 1.01c5.845 0 10.502-4.66 10.502-10.507a10.43 10.43 0 00-2.004-6.47zM12 21.94a9.404 9.404 0 01-4.804-1.406l-.345-.204-4.7 1.215 1.253-4.591-.227-.377a9.448 9.448 0 0115.244-11.03 9.37 9.37 0 012.27 6.22c0 5.18-4.21 9.39-9.491 9.39zM16.753 14.04c-.267-.134-1.575-.776-1.82-.865-.245-.09-.422-.134-.6.134-.18.267-.694.864-.852 1.04-.156.18-.312.202-.58.067-.266-.134-1.124-.413-2.145-1.328-.793-.707-1.33-1.58-1.486-1.847-.156-.267-.017-.412.117-.543.12-.119.267-.312.4-.468.134-.156.18-.267.267-.445.09-.18.045-.335-.022-.47-.067-.135-.6-1.445-.82-1.976-.217-.518-.44-.447-.6-.456-.156-.009-.335-.01-.514-.01-.18 0-.47.067-.716.335-.245.267-.94.92-.94 2.24 0 1.317.963 2.59 1.1 2.773.134.18 1.9 2.9 4.6 4.067.643.277 1.145.442 1.536.566.645.204 1.234.175 1.7.107.518-.076 1.575-.643 1.8-1.264.225-.62.225-1.15.156-1.264-.067-.115-.243-.18-.51-.313z"/></svg>
+        </button>
+        <button class="share-facebook" aria-label="Dela via Facebook" title="Facebook" tabindex="0" role="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path d="M22.675 0h-21.35C.597 0 0 .598 0 1.333v21.333C0 23.4.598 24 1.325 24H12.82v-9.294H9.692v-3.62h3.126V8.413c0-3.1 1.894-4.788 4.66-4.788 1.325 0 2.466.1 2.797.142v3.245l-1.918.001c-1.504 0-1.797.715-1.797 1.764v2.313h3.59l-.467 3.62h-3.122V24h6.116c.73 0 1.324-.6 1.324-1.334V1.333C24 .598 23.405 0 22.675 0z"/></svg>
+        </button>
+        <button class="share-twitter" aria-label="Dela via Twitter" title="Twitter" tabindex="0" role="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path d="M23.954 4.569a10.02 10.02 0 01-2.825.775 4.932 4.932 0 002.163-2.724 9.865 9.865 0 01-3.127 1.195 4.917 4.917 0 00-8.38 4.482A13.95 13.95 0 011.671 3.15 4.822 4.822 0 003.195 9.722a4.902 4.902 0 01-2.229-.616v.06a4.917 4.917 0 003.946 4.82 4.952 4.952 0 01-2.224.084 4.919 4.919 0 004.59 3.41A9.867 9.867 0 010 19.54a13.94 13.94 0 007.548 2.212c9.142 0 14.307-7.72 14.307-14.42 0-.22-.004-.433-.015-.644A10.025 10.025 0 0024 4.59z"/></svg>
+        </button>
+        <button class="share-email" aria-label="Dela via Email" title="Email" tabindex="0" role="button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.104.897 2 2 2h16c1.104 0 2-.896 2-2V6c0-1.103-.896-2-2-2zM4 6h16l-8 5-8-5zm0 12V8l7.455 4.664a.998.998 0 001.09 0L20 8v10H4z"/></svg>
+        </button>
       </div>
     </section>
   </main>
 </div>
 
 <script>
-  // Dark mode toggle
-  const darkToggleBtn = document.getElementById('darkModeToggle');
-  darkToggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    const isDark = document.body.classList.contains('dark');
-    darkToggleBtn.setAttribute('aria-pressed', isDark);
-    darkToggleBtn.textContent = isDark ? 'Ljust läge' : 'Mörkt läge';
-  });
-
-  // Allowed items list (full text for clarity)
-  const allowedItemsRaw = [
-    "1 påse napolitana salads mix",
-    "1 kg tomat",
-    "1 kg championer",
-    "1 kg rödlök",
-    "1 st margarin flytande rama",
-    "1 dunk olivolja extra virgin 5 L",
-    "1 kg gurka ofilmad",
-    "1 kg citron",
-    "1 hink handskalade räkor",
-    "1/2 kg granny smith äpplen gröna",
-    "1 flak Ramlösa naturell i burk",
-    "1 flak coca cola i burk",
-    "1 flak coca cola zero i burk",
-    "1 liter standard mjölk",
-    "1 spray grädde",
-    "1 liter rama grädde",
-    "1 påse riven mozzarella ost",
-    "1 påse riven grano padano",
-    "2 st 500 gram smör red label arla",
-    "15 st bakad potatis",
-    "5 kg spaghetti",
-    "1 chèvre rulle",
-    "1 påse mospotatis chefs cut",
-    "1 ask ruccola",
-    "1 kg lime",
-    "1 ask basilika",
-    "1 knippe färsk mynta",
-    "1 kg apelsin",
-    "1 ask salami Milano",
-    "1 burk stenbitsrom",
-    "1 hink kokta ägg skalade",
-    "1 påse jordnötter saltade",
-    "1 påse valnötskärnor",
-    "1 påse vitlökskrutonger",
-    "1 kartong grillad kycklingbröst fryst",
-    "1 knippe dill",
-    "1 kg tvättad kul potatis",
-    "1 roman huvuden",
-    "1 st godmorgon apelsinjuice",
-    "1 st godmorgon äpple juice",
-    "1 flak Sprite i burk",
-    "1 kartong mozzarella bollar",
-    "1 ask Prochutto crudo",
-    "1 kartong fryst lingon",
-    "1 crisp sallad"
-  ];
-
-  const itemsUl = document.getElementById('items');
-  const groceryListUl = document.getElementById('groceryList');
-
-  // Populate selectable items list
-  allowedItemsRaw.forEach(fullItem => {
-    const li = document.createElement('li');
-    li.className = 'item';
-    li.textContent = fullItem;
-    const addBtn = document.createElement('button');
-    addBtn.textContent = 'Lägg till';
-    addBtn.setAttribute('aria-label', 'Lägg till ' + fullItem);
-    li.appendChild(addBtn);
-
-    addBtn.addEventListener('click', () => {
-      addGroceryItem(fullItem);
-    });
-
-    itemsUl.appendChild(li);
-  });
-
-  const groceryItems = [];
-
-  function addGroceryItem(fullItemText) {
-    if (groceryItems.some(i => i.fullItemText === fullItemText)) return;
-
-    // Parse quantity and unit
-    let quantity = '';
-    let unit = '';
-    let name = fullItemText;
-
-    const regex = /^(\d+\/?\d*)\s*(kg|st|liter|flak|påse|dunk|hink|spray|ask|knippe|kartong|burk|spray|gram)?\s*(.*)$/i;
-    const match = fullItemText.match(regex);
-    if (match) {
-      quantity = match[1] || '';
-      unit = match[2] || '';
-      name = match[3] || fullItemText;
+  const languageData = {
+    sv: {
+      pageTitle: "Min inköpslista",
+      chooseTitle: "Välj produkter",
+      listTitle: "Din lista",
+      addBtn: "Lägg till",
+      removeBtn: "Ta bort",
+      darkModeOn: "Mörkt läge",
+      darkModeOff: "Ljust läge",
+      langToggle: "EN",
+      shareWhatsapp: "Dela via WhatsApp",
+      shareFacebook: "Dela via Facebook",
+      shareTwitter: "Dela via Twitter",
+      shareEmail: "Dela via Email",
+    },
+    en: {
+      pageTitle: "My Grocery List",
+      chooseTitle: "Choose Products",
+      listTitle: "Your List",
+      addBtn: "Add",
+      removeBtn: "Remove",
+      darkModeOn: "Dark Mode",
+      darkModeOff: "Light Mode",
+      langToggle: "SV",
+      shareWhatsapp: "Share on WhatsApp",
+      shareFacebook: "Share on Facebook",
+      shareTwitter: "Share on Twitter",
+      shareEmail: "Share via Email",
     }
-
-    const id = Date.now() + Math.random().toString(36).slice(2, 7);
-    groceryItems.push({ id, quantity, unit, name, fullItemText });
-    renderGroceryList();
-  }
-
-  function renderGroceryList() {
-    groceryListUl.innerHTML = '';
-    groceryItems.forEach(item => {
-      const li = document.createElement('li');
-      li.className = 'grocery-item';
-
-      const nameSpan = document.createElement('span');
-      nameSpan.textContent = item.name;
-      nameSpan.title = 'Produktnamn';
-      li.appendChild(nameSpan);
-
-      const qtyInput = document.createElement('input');
-      qtyInput.type = 'text';
-      qtyInput.value = item.quantity;
-      qtyInput.title = 'Mängd';
-      qtyInput.setAttribute('aria-label', `Mängd för ${item.name}`);
-      qtyInput.addEventListener('input', e => {
-        item.quantity = e.target.value;
-      });
-
-      const unitInput = document.createElement('input');
-      unitInput.type = 'text';
-      unitInput.value = item.unit;
-      unitInput.title = 'Enhet';
-      unitInput.setAttribute('aria-label', `Enhet för ${item.name}`);
-      unitInput.addEventListener('input', e => {
-        item.unit = e.target.value;
-      });
-
-      const inputGroup = document.createElement('div');
-      inputGroup.className = 'input-group';
-      inputGroup.appendChild(qtyInput);
-      inputGroup.appendChild(unitInput);
-      li.appendChild(inputGroup);
-
-      const removeBtn = document.createElement('button');
-      removeBtn.textContent = 'Ta bort';
-      removeBtn.title = 'Ta bort från listan';
-      removeBtn.setAttribute('aria-label', 'Ta bort ' + item.name + ' från listan');
-      removeBtn.addEventListener('click', () => {
-        const index = groceryItems.findIndex(i => i.id === item.id);
-        if (index !== -1) {
-          groceryItems.splice(index, 1);
-          renderGroceryList();
-        }
-      });
-
-      li.appendChild(removeBtn);
-      groceryListUl.appendChild(li);
-    });
-  }
-
-  // Share buttons functionality
-  const shareButtons = {
-    whatsapp: document.querySelector('.share-whatsapp'),
-    facebook: document.querySelector('.share-facebook'),
-    twitter: document.querySelector('.share-twitter'),
-    email: document.querySelector('.share-email')
   };
 
-  function getGroceryText() {
-    if (groceryItems.length === 0) return "Min inköpslista är tom.";
-    return groceryItems.map(i => `${i.quantity} ${i.unit} ${i.name}`).join('\n');
+  let currentLang = 'sv';
+
+  const items = [
+    { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
+    { name: "Tomat", quantity: 1, unit: "kg" },
+    { name: "Championer", quantity: 1, unit: "kg" },
+    { name: "Rödlök", quantity: 1, unit: "kg" },
+    { name: "Margarin flytande rama", quantity: 1, unit: "st" },
+    { name: "Olivolja extra virgin", quantity: 5, unit: "L" },
+    { name: "Gurka ofilmad", quantity: 1, unit: "kg" },
+    { name: "Citron", quantity: 1, unit: "kg" },
+    { name: "Handskalade räkor", quantity: 1, unit: "hink" },
+    { name: "Granny Smith äpplen gröna", quantity: 0.5, unit: "kg" },
+    { name: "Ramlösa naturell i burk", quantity: 1, unit: "flak" },
+    { name: "Coca Cola i burk", quantity: 1, unit: "flak" },
+    { name: "Coca Cola Zero i burk", quantity: 1, unit: "flak" },
+    { name: "Standard mjölk", quantity: 1, unit: "L" },
+    { name: "Spray grädde", quantity: 1, unit: "st" },
+    { name: "Rama grädde", quantity: 1, unit: "L" },
+    { name: "Riven mozzarella ost", quantity: 1, unit: "påse" },
+    { name: "Riven grano padano", quantity: 1, unit: "påse" },
+    { name: "Smör red label Arla", quantity: 500, unit: "g" },
+    { name: "Bakad potatis", quantity: 15, unit: "st" },
+    { name: "Spaghetti", quantity: 5, unit: "kg" },
+    { name: "Chèvre rulle", quantity: 1, unit: "st" },
+    { name: "Mospotatis chefs cut", quantity: 1, unit: "påse" },
+    { name: "Ruccola", quantity: 1, unit: "ask" },
+    { name: "Lime", quantity: 1, unit: "kg" },
+    { name: "Basilika", quantity: 1, unit: "ask" },
+    { name: "Färsk mynta", quantity: 1, unit: "knippe" },
+    { name: "Apelsin", quantity: 1, unit: "kg" },
+    { name: "Salami Milano", quantity: 1, unit: "ask" },
+    { name: "Stenbitsrom", quantity: 1, unit: "burk" },
+    { name: "Kokta ägg skalade", quantity: 1, unit: "hink" },
+    { name: "Jordnötter saltade", quantity: 1, unit: "påse" },
+    { name: "Valnötskärnor", quantity: 1, unit: "påse" },
+    { name: "Vitlökskrutonger", quantity: 1, unit: "påse" },
+    { name: "Grillad kycklingbröst fryst", quantity: 1, unit: "kartong" },
+    { name: "Dill", quantity: 1, unit: "knippe" },
+    { name: "Tvättad kul potatis", quantity: 1, unit: "kg" },
+    { name: "Roman huvuden", quantity: 1, unit: "st" },
+    { name: "Godmorgon apelsinjuice", quantity: 1, unit: "st" },
+    { name: "Godmorgon äpple juice", quantity: 1, unit: "st" },
+    { name: "Sprite i burk", quantity: 1, unit: "flak" },
+    { name: "Mozzarella bollar", quantity: 1, unit: "kartong" },
+    { name: "Prochutto crudo", quantity: 1, unit: "ask" },
+    { name: "Fryst lingon", quantity: 1, unit: "kartong" },
+    { name: "Crisp sallad", quantity: 1, unit: "st" },
+  ];
+
+  const itemsContainer = document.getElementById('items');
+  const groceryList = document.getElementById('groceryList');
+  const pageTitle = document.getElementById('pageTitle');
+  const chooseTitle = document.getElementById('chooseTitle');
+  const listTitle = document.getElementById('listTitle');
+  const langToggle = document.getElementById('langToggle');
+  const darkModeToggle = document.getElementById('darkModeToggle');
+  const shareButtons = document.querySelectorAll('.share-buttons button');
+
+  let groceryItems = [];
+
+  function renderItems() {
+    itemsContainer.innerHTML = '';
+    items.forEach((item, index) => {
+      const itemDiv = document.createElement('div');
+      itemDiv.classList.add('item');
+      itemDiv.innerHTML = `
+        <span>${item.name} (${item.quantity} ${item.unit})</span>
+        <button aria-label="${languageData[currentLang].addBtn} ${item.name}" data-index="${index}">${languageData[currentLang].addBtn}</button>
+      `;
+      itemsContainer.appendChild(itemDiv);
+    });
   }
 
-  shareButtons.whatsapp.addEventListener('click', () => {
-    const text = encodeURIComponent(getGroceryText());
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+  function renderList() {
+    groceryList.innerHTML = '';
+    groceryItems.forEach((item, index) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `${item.name} (${item.quantity} ${item.unit})`;
+      const removeBtn = document.createElement('button');
+      removeBtn.textContent = languageData[currentLang].removeBtn;
+      removeBtn.setAttribute('aria-label', `${languageData[currentLang].removeBtn} ${item.name}`);
+      removeBtn.addEventListener('click', () => {
+        groceryItems.splice(index, 1);
+        renderList();
+      });
+      listItem.appendChild(removeBtn);
+      groceryList.appendChild(listItem);
+    });
+  }
+
+  itemsContainer.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+      const index = e.target.getAttribute('data-index');
+      groceryItems.push(items[index]);
+      renderList();
+    }
   });
 
-  shareButtons.facebook.addEventListener('click', () => {
-    const text = encodeURIComponent(getGroceryText());
-    const url = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent('https://example.com') + '&quote=' + text;
-    window.open(url, '_blank');
+  langToggle.addEventListener('click', () => {
+    currentLang = currentLang === 'sv' ? 'en' : 'sv';
+    updateLanguage();
   });
 
-  shareButtons.twitter.addEventListener('click', () => {
-    const text = encodeURIComponent(getGroceryText());
-    const url = `https://twitter.com/intent/tweet?text=${text}`;
-    window.open(url, '_blank');
+  function updateLanguage() {
+    pageTitle.textContent = languageData[currentLang].pageTitle;
+    chooseTitle.textContent = languageData[currentLang].chooseTitle;
+    listTitle.textContent = languageData[currentLang].listTitle;
+    langToggle.textContent = languageData[currentLang].langToggle;
+    darkModeToggle.textContent = languageData[currentLang] === 'sv' ? languageData[currentLang].darkModeOn : languageData[currentLang].darkModeOff;
+    shareButtons.forEach(button => {
+      if (button.classList.contains('share-whatsapp')) button.setAttribute('aria-label', languageData[currentLang].shareWhatsapp);
+      else if (button.classList.contains('share-facebook')) button.setAttribute('aria-label', languageData[currentLang].shareFacebook);
+      else if (button.classList.contains('share-twitter')) button.setAttribute('aria-label', languageData[currentLang].shareTwitter);
+      else if (button.classList.contains('share-email')) button.setAttribute('aria-label', languageData[currentLang].shareEmail);
+      // update titles
+      if (button.classList.contains('share-whatsapp')) button.title = languageData[currentLang].shareWhatsapp;
+      else if (button.classList.contains('share-facebook')) button.title = languageData[currentLang].shareFacebook;
+      else if (button.classList.contains('share-twitter')) button.title = languageData[currentLang].shareTwitter;
+      else if (button.classList.contains('share-email')) button.title = languageData[currentLang].shareEmail;
+    });
+    renderItems();
+    renderList();
+  }
+
+  darkModeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? languageData[currentLang].darkModeOn : languageData[currentLang].darkModeOff;
   });
 
-  shareButtons.email.addEventListener('click', () => {
-    const subject = encodeURIComponent('Min inköpslista');
-    const body = encodeURIComponent(getGroceryText());
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-  });
+  updateLanguage();
 </script>
 </body>
 </html>
-
 
 
