@@ -131,121 +131,84 @@
   <ul id="addedList"></ul>
 
   <script>
-  // Advanced Sharing System with Icons
+// Advanced Sharing System with Popular Platforms
   const shareContainer = document.createElement("div");
   shareContainer.style.marginTop = "20px";
   shareContainer.style.display = "flex";
-  shareContainer.style.gap = "15px"; // Add spacing between buttons
+  shareContainer.style.flexWrap = "wrap";
+  shareContainer.style.gap = "15px"; // Space between buttons
 
-  const shareWhatsAppButton = document.createElement("button");
-  shareWhatsAppButton.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp Logo" style="width:20px; height:20px; vertical-align:middle; margin-right:5px;"> Share on WhatsApp`;
-  shareWhatsAppButton.style.display = "flex";
-  shareWhatsAppButton.style.alignItems = "center";
-  shareWhatsAppButton.style.gap = "10px";
-  shareWhatsAppButton.style.padding = "10px";
+  // Platform Share Buttons
+  const platforms = [
+    {
+      name: "WhatsApp",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg",
+      url: "https://wa.me/?text={text}",
+    },
+    {
+      name: "Facebook Messenger",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/1/1b/Facebook_Messenger_logo_2020.svg",
+      url: "https://www.messenger.com/t/?message={text}",
+    },
+    {
+      name: "Telegram",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg",
+      url: "https://t.me/share/url?text={text}",
+    },
+    {
+      name: "Twitter",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/6/60/Twitter_Logo_as_of_2021.svg",
+      url: "https://twitter.com/intent/tweet?text={text}",
+    },
+    {
+      name: "Email",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.svg",
+      url: "mailto:?subject=My%20Grocery%20List&body={text}",
+    },
+  ];
 
-  const generateLinkButton = document.createElement("button");
-  generateLinkButton.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Simpleicons_Business_link.svg/1024px-Simpleicons_Business_link.svg.png" alt="Link Logo" style="width:20px; height:20px; vertical-align:middle; margin-right:5px;"> Sharable Link`;
-  generateLinkButton.style.display = "flex";
-  generateLinkButton.style.alignItems = "center";
-  generateLinkButton.style.gap = "10px";
-  generateLinkButton.style.padding = "10px";
+  // Create Sharing Buttons
+  platforms.forEach((platform) => {
+    const button = document.createElement("button");
+    button.innerHTML = `
+      <img src="${platform.logo}" alt="${platform.name} Logo" style="width:20px; height:20px; vertical-align:middle; margin-right:10px;">
+      Share on ${platform.name}
+    `;
+    button.style.display = "flex";
+    button.style.alignItems = "center";
+    button.style.gap = "10px";
+    button.style.padding = "10px";
+    button.style.border = "1px solid #ccc";
+    button.style.borderRadius = "8px";
+    button.style.backgroundColor = "#f9f9f9";
+    button.style.cursor = "pointer";
 
-  const copyLinkButton = document.createElement("button");
-  copyLinkButton.innerHTML = `<img src="https://upload.wikimedia.org/wikipedia/commons/8/8e/Copy-icon.svg" alt="Copy Logo" style="width:20px; height:20px; vertical-align:middle; margin-right:5px;"> Copy Link`;
-  copyLinkButton.style.display = "none"; // Initially hidden
-  copyLinkButton.style.alignItems = "center";
-  copyLinkButton.style.gap = "10px";
-  copyLinkButton.style.padding = "10px";
+    // Click Event for Sharing
+    button.addEventListener("click", () => {
+      if (addedItems.length === 0) {
+        alert("Your list is empty. Add some items first.");
+        return;
+      }
+      const listText = addedItems
+        .map((item) => `${item.quantity} ${item.unit} ${item.name}`)
+        .join("\n");
+      const shareUrl = platform.url.replace("{text}", encodeURIComponent(listText));
+      window.open(shareUrl, "_blank");
+    });
 
-  const sharableLinkInput = document.createElement("textarea");
-  sharableLinkInput.setAttribute("readonly", true);
-  sharableLinkInput.setAttribute("rows", "2");
-  sharableLinkInput.style.width = "100%";
-  sharableLinkInput.style.marginTop = "10px";
-  sharableLinkInput.style.display = "none"; // Initially hidden
-  sharableLinkInput.style.padding = "10px";
+    shareContainer.appendChild(button);
+  });
 
-  shareContainer.appendChild(shareWhatsAppButton);
-  shareContainer.appendChild(generateLinkButton);
-  shareContainer.appendChild(copyLinkButton);
   document.body.appendChild(shareContainer);
-  document.body.appendChild(sharableLinkInput);
 
-  // Function to get the added list as a JSON string
-  function getAddedListJson() {
-    return JSON.stringify(
-      addedItems.map((item) => ({
-        name: item.name,
-        quantity: item.quantity,
-        unit: item.unit,
-      }))
-    );
-  }
+  // Example Items (Replace with dynamic logic in your app)
+  let addedItems = [
+    { name: "Apples", quantity: 5, unit: "kg" },
+    { name: "Milk", quantity: 2, unit: "liters" },
+    { name: "Bread", quantity: 1, unit: "loaf" },
+  ];
 
-  // WhatsApp Sharing
-  shareWhatsAppButton.addEventListener("click", () => {
-    if (addedItems.length === 0) {
-      alert("Your list is empty. Add some items first.");
-      return;
-    }
-    const listText = addedItems
-      .map((item) => `${item.quantity} ${item.unit} ${item.name}`)
-      .join("\n");
-    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
-      "Here's my grocery list:\n" + listText
-    )}`;
-    window.open(whatsappUrl, "_blank");
-  });
-
-  // Generate Sharable Link
-  generateLinkButton.addEventListener("click", () => {
-    if (addedItems.length === 0) {
-      alert("Your list is empty. Add some items first.");
-      return;
-    }
-    try {
-      const listJson = getAddedListJson();
-      const encodedList = btoa(listJson); // Base64 encode the list
-      const link = `${window.location.origin}${window.location.pathname}?list=${encodedList}`;
-      sharableLinkInput.value = link;
-      sharableLinkInput.style.display = "block";
-      copyLinkButton.style.display = "block";
-      alert("Sharable link generated! Copy it below.");
-    } catch (error) {
-      console.error("Error generating link:", error);
-      alert("Failed to generate the link. Please try again.");
-    }
-  });
-
-  // Copy Link to Clipboard
-  copyLinkButton.addEventListener("click", () => {
-    sharableLinkInput.select();
-    document.execCommand("copy");
-    alert("Link copied to clipboard!");
-  });
-
-  // Load List from Shared Link
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has("list")) {
-    try {
-      const encodedList = urlParams.get("list");
-      const listJson = atob(encodedList); // Base64 decode the list
-      const listFromUrl = JSON.parse(listJson);
-      addedItems = listFromUrl.map((item) => ({
-        name: item.name,
-        quantity: item.quantity,
-        unit: item.unit,
-      }));
-      saveToStorage("groceryList", addedItems);
-      renderAddedList();
-    } catch (error) {
-      console.error("Error parsing shared list data:", error);
-      alert(
-        "Failed to load the shared list. The data might be corrupted or invalid."
-      );
-    }
-  }
+  // Add item-saving logic as needed
 
    const items = [
   { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
