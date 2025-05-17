@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grocery Manager</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      color: #222;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    h1 {
+      color: #ff5722;
+      font-size: 2.5rem;
+    }
+    input, button {
+      margin: 10px 0;
+      padding: 15px 12px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    input {
+      width: 100%;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #ff5722;
+      color: white;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #e64a19;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: rgba(255, 255, 255, 0.9);
+      margin: 5px 0;
+      padding: 12px 15px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    li input[type="number"],
+    li input[type="text"] {
+      width: 70px;
+      padding: 8px;
+      margin: 5px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    #darkModeToggle {
+      background-color: #444;
+      margin-bottom: 15px;
+    }
+    #autocomplete {
+      position: absolute;
+      z-index: 1000;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: -8px;
+      width: calc(100% - 20px);
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    #autocomplete div {
+      padding: 10px;
+      cursor: pointer;
+    }
+    #autocomplete div:hover {
+      background-color: #f0f0f0;
+    }
+    /* Dark mode styles */
+    body.dark {
+      background-color: #121212;
+      background-image: none;
+      color: #ddd;
+    }
+    body.dark h1 {
+      color: #ff8a50;
+    }
+    body.dark button {
+      background-color: #ff8a50;
+      color: #121212;
+    }
+    body.dark button:hover {
+      background-color: #ff5722;
+      color: white;
+    }
+    body.dark li {
+      background: #222;
+      color: #ddd;
+    }
+    body.dark li input[type="number"],
+    body.dark li input[type="text"] {
+      background: #333;
+      border: 1px solid #555;
+      color: #ddd;
+    }
+    body.dark #autocomplete div {
+      background-color: #222;
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <h1>Grocery Manager</h1>
+  <button id="darkModeToggle">Toggle Dark Mode</button>
+  <div style="position: relative;">
+    <input type="text" id="searchBar" placeholder="Search for items..." />
+    <div id="autocomplete"></div>
+  </div>
+  <button id="toggleAllBtn">Show All Items</button>
+  <ul id="itemsList"></ul>
+  <h2>Your List</h2>
+  <ul id="addedList"></ul>
+
+  <script>
+   const items = [
+  { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
+  { name: "Tomat", quantity: 1, unit: "kg" },
+  { name: "Championer", quantity: 1, unit: "kg" },
+  { name: "Rödlök", quantity: 1, unit: "kg" },
+  { name: "Margarin flytande rama", quantity: 1, unit: "st" },
+  { name: "Olivolja extra virgin", quantity: 5, unit: "L" },
+  { name: "Gurka ofilmad", quantity: 1, unit: "kg" },
+  { name: "Citron", quantity: 1, unit: "kg" },
+  { name: "Handskalade räkor", quantity: 1, unit: "hink" },
+  { name: "Granny Smith äpplen gröna", quantity: 0.5, unit: "kg" },
+  { name: "Ramlösa naturell i burk", quantity: 1, unit: "flak" },
+  { name: "Coca Cola i burk", quantity: 1, unit: "flak" },
+  { name: "Coca Cola Zero i burk", quantity: 1, unit: "flak" },
+  { name: "Standard mjölk", quantity: 1, unit: "L" },
+  { name: "Spray grädde", quantity: 1, unit: "st" },
+  { name: "Rama grädde", quantity: 1, unit: "L" },
+  { name: "Riven mozzarella ost", quantity: 1, unit: "påse" },
+  { name: "Riven grano padano", quantity: 1, unit: "påse" },
+  { name: "Smör red label Arla", quantity: 500, unit: "g" },
+  { name: "Bakad potatis", quantity: 15, unit: "st" },
+  { name: "Spaghetti", quantity: 5, unit: "kg" },
+  { name: "Chèvre rulle", quantity: 1, unit: "st" },
+  { name: "Mospotatis chefs cut", quantity: 1, unit: "påse" },
+  { name: "Ruccola", quantity: 1, unit: "ask" },
+  { name: "Lime", quantity: 1, unit: "kg" },
+  { name: "Basilika", quantity: 1, unit: "ask" },
+  { name: "Färsk mynta", quantity: 1, unit: "knippe" },
+  { name: "Apelsin", quantity: 1, unit: "kg" },
+  { name: "Salami Milano", quantity: 1, unit: "ask" },
+  { name: "Stenbitsrom", quantity: 1, unit: "burk" },
+  { name: "Kokta ägg skalade", quantity: 1, unit: "hink" },
+  { name: "Jordnötter saltade", quantity: 1, unit: "påse" },
+  { name: "Valnötskärnor", quantity: 1, unit: "påse" },
+  { name: "Vitlökskrutonger", quantity: 1, unit: "påse" },
+  { name: "Grillad kycklingbröst fryst", quantity: 1, unit: "kartong" },
+  { name: "Dill", quantity: 1, unit: "knippe" },
+  { name: "Tvättad kul potatis", quantity: 1, unit: "kg" },
+  { name: "Roman huvuden", quantity: 1, unit: "st" },
+  { name: "Godmorgon apelsinjuice", quantity: 1, unit: "st" },
+  { name: "Godmorgon äpple juice", quantity: 1, unit: "st" },
+  { name: "Sprite i burk", quantity: 1, unit: "flak" },
+  { name: "Mozzarella bollar", quantity: 1, unit: "kartong" },
+  { name: "Prochutto crudo", quantity: 1, unit: "ask" },
+  { name: "Fryst lingon", quantity: 1, unit: "kartong" },
+  { name: "Crisp sallad", quantity: 1, unit: "st" }
+];
+
+
+    const searchBar = document.getElementById("searchBar");
+    const itemsList = document.getElementById("itemsList");
+    const addedList = document.getElementById("addedList");
+    const toggleAllBtn = document.getElementById("toggleAllBtn");
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    const autocomplete = document.getElementById("autocomplete");
+
+    let addedItems = [];
+    let showAllItems = false;
+
+    function saveToStorage(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function loadFromStorage(key, defaultValue) {
+      const saved = localStorage.getItem(key);
+      return saved ? JSON.parse(saved) : defaultValue;
+    }
+
+    function addItem(item) {
+      addedItems.push({ ...item });
+      saveToStorage("groceryList", addedItems);
+      renderAddedList();
+      renderItemsList(filterItems(searchBar.value));
+    }
+
+    function removeItem(itemName) {
+      addedItems = addedItems.filter((i) => i.name !== itemName);
+      saveToStorage("groceryList", addedItems);
+      renderAddedList();
+      renderItemsList(filterItems(searchBar.value));
+    }
+
+    function updateItemDetails(index, field, value) {
+      addedItems[index][field] = value;
+      saveToStorage("groceryList", addedItems);
+      renderAddedList();
+    }
+
+    function renderItemsList(filteredItems) {
+      itemsList.innerHTML = "";
+      filteredItems.forEach((item) => {
+        if (addedItems.some((i) => i.name === item.name)) return;
+
+        const li = document.createElement("li");
+        li.textContent = `${item.name} (${item.quantity} ${item.unit})`;
+
+        const btn = document.createElement("button");
+        btn.textContent = "Add to List";
+        btn.onclick = () => addItem(item);
+
+        li.appendChild(btn);
+        itemsList.appendChild(li);
+      });
+
+      if (filteredItems.length === 0) {
+        const li = document.createElement("li");
+        li.textContent = "No items found";
+        itemsList.appendChild(li);
+      }
+    }
+
+    function renderAddedList() {
+      addedList.innerHTML = "";
+      addedItems.forEach((item, index) => {
+        const li = document.createElement("li");
+
+        const name = document.createElement("span");
+        name.textContent = `${item.name}: `;
+
+        const quantityInput = document.createElement("input");
+        quantityInput.type = "number";
+        quantityInput.value = item.quantity;
+        quantityInput.onchange = (e) =>
+          updateItemDetails(index, "quantity", parseFloat(e.target.value));
+
+        const unitInput = document.createElement("input");
+        unitInput.type = "text";
+        unitInput.value = item.unit;
+        unitInput.onchange = (e) => updateItemDetails(index, "unit", e.target.value);
+
+        const btn = document.createElement("button");
+        btn.textContent = "Remove";
+        btn.onclick = () => removeItem(item.name);
+
+        li.appendChild(name);
+        li.appendChild(quantityInput);
+        li.appendChild(unitInput);
+        li.appendChild(btn);
+
+        addedList.appendChild(li);
+      });
+    }
+
+    function filterItems(query) {
+      return items.filter((item) =>
+        item.name.toLowerCase().includes(query.trim().toLowerCase())
+      );
+    }
+
+    function renderAutocomplete(filteredItems) {
+      autocomplete.innerHTML = "";
+      filteredItems.forEach((item) => {
+        const div = document.createElement("div");
+        div.textContent = item.name;
+        div.onclick = () => {
+          searchBar.value = item.name;
+          autocomplete.innerHTML = "";
+          renderItemsList(filterItems(item.name));
+        };
+        autocomplete.appendChild(div);
+      });
+    }
+
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle("dark");
+      saveToStorage("darkMode", isDark);
+    }
+
+    searchBar.addEventListener("input", () => {
+      const query = searchBar.value;
+      renderAutocomplete(filterItems(query));
+      renderItemsList(filterItems(query));
+    });
+
+    toggleAllBtn.addEventListener("click", () => {
+      showAllItems = !showAllItems;
+      toggleAllBtn.textContent = showAllItems ? "Hide All Items" : "Show All Items";
+      renderItemsList(filterItems(""));
+    });
+
+    darkModeToggle.addEventListener("click", toggleDarkMode);
+
+    addedItems = loadFromStorage("groceryList", []);
+    const isDark = loadFromStorage("darkMode", false);
+    if (isDark) {
+      document.body.classList.add("dark");
+    }
+    renderAddedList();
+    renderItemsList(filterItems(""));
+  </script>
+</body>
+</html>
