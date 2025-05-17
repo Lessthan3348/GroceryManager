@@ -3,285 +3,289 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grocery List — Redesigned UI</title>
+<title>Responsive Grocery List with Dark Mode</title>
 <style>
-  /* Reset & base */
-  * {
-    box-sizing: border-box;
+  /* Base colors and fonts */
+  :root {
+    --blue: #4a90e2;
+    --light-bg: #f0f4f8;
+    --card-bg: #fff;
+    --text-color: #222;
+    --input-bg: #fff;
+    --input-border: #ccc;
+    --btn-bg: var(--blue);
+    --btn-hover-bg: #357ABD;
+    --btn-text: #fff;
+    --shadow: rgba(0,0,0,0.1);
   }
+  /* Dark mode variables */
+  body.dark {
+    --light-bg: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #eee;
+    --input-bg: #333;
+    --input-border: #555;
+    --btn-bg: #2a64d6;
+    --btn-hover-bg: #163a96;
+    --btn-text: #eee;
+    --shadow: rgba(0,0,0,0.7);
+  }
+
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f4f8;
-    margin: 30px;
-    color: #34495e;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
   h1 {
-    font-weight: 700;
-    font-size: 2.2rem;
-    margin-bottom: 20px;
-    color: #2c3e50;
-    user-select: none;
+    text-align: center;
+    margin: 1rem 0;
   }
-
-  /* Search Bar */
-  #searchBar {
-    width: 320px;
-    padding: 12px 16px;
-    font-size: 1.1rem;
-    border-radius: 12px;
-    border: 2px solid #a8c0ff;
-    background: #e6ecff;
-    color: #2c3e50;
-    transition: border-color 0.3s ease, background-color 0.3s ease;
-    box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.05);
-  }
-  #searchBar::placeholder {
-    color: #7a8ba6;
-  }
-  #searchBar:focus {
-    border-color: #4a90e2;
-    background: #ffffff;
-    outline: none;
-    box-shadow: 0 0 10px #4a90e2aa;
-  }
-
-  /* Autocomplete */
-  #autocomplete {
-    position: absolute;
-    width: 320px;
-    max-height: 180px;
-    overflow-y: auto;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 6px 14px rgb(0 0 0 / 0.15);
-    margin-top: 4px;
-    z-index: 150;
-    display: none;
-  }
-  #autocomplete div {
-    padding: 10px 16px;
-    cursor: pointer;
-    font-size: 1rem;
-    color: #34495e;
-    transition: background-color 0.25s ease, color 0.25s ease;
-  }
-  #autocomplete div:hover,
-  #autocomplete div:focus {
-    background-color: #4a90e2;
-    color: white;
-    outline: none;
-  }
-
-  /* List */
-  ul#itemList {
-    margin-top: 25px;
+  .container {
     max-width: 700px;
-    padding-left: 0;
+    margin: auto;
+    padding: 1rem;
+  }
+  /* Card style for list area */
+  .list-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px var(--shadow);
+    padding: 1rem;
+  }
+
+  /* Input & add button area */
+  .add-item-area {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+  .add-item-area input[type="text"] {
+    flex-grow: 1;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--input-border);
+    border-radius: 6px 0 0 6px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    transition: border-color 0.2s ease;
+  }
+  .add-item-area input[type="text"]:focus {
+    outline: none;
+    border-color: var(--btn-bg);
+  }
+  .add-item-area button {
+    padding: 0 1.2rem;
+    background: var(--btn-bg);
+    border: none;
+    color: var(--btn-text);
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 0 6px 6px 0;
+    transition: background-color 0.3s ease;
+  }
+  .add-item-area button:hover {
+    background: var(--btn-hover-bg);
+  }
+
+  /* List styling */
+  ul#itemList {
     list-style: none;
+    padding: 0;
+    margin: 0;
   }
   ul#itemList li {
-    background: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-radius: 14px;
-    padding: 14px 20px;
-    margin-bottom: 14px;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.07);
-    transition: box-shadow 0.3s ease;
+    background: var(--card-bg);
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 6px var(--shadow);
   }
-  ul#itemList li:hover {
-    box-shadow: 0 4px 16px rgb(0 0 0 / 0.12);
-  }
-  span.name {
-    flex: 2;
+  ul#itemList li span.name {
+    flex-grow: 1;
     font-weight: 600;
-    font-size: 1.15rem;
-    user-select: none;
-    color: #2c3e50;
   }
-
-  /* Inputs inside list */
   ul#itemList li input[type="number"],
   ul#itemList li input.unit-input {
+    width: 70px;
+    margin-left: 10px;
+    padding: 0.3rem 0.5rem;
     font-size: 1rem;
-    padding: 8px 12px;
-    border-radius: 12px;
-    border: 2px solid #a8c0ff;
-    width: 80px;
-    color: #34495e;
+    border: 1px solid var(--input-border);
+    border-radius: 5px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
     text-align: center;
-    transition: border-color 0.3s ease;
-    box-shadow: inset 0 2px 6px rgb(0 0 0 / 0.05);
-    margin-left: 18px;
+    transition: border-color 0.2s ease;
   }
   ul#itemList li input[type="number"]:focus,
   ul#itemList li input.unit-input:focus {
-    border-color: #4a90e2;
     outline: none;
-    box-shadow: 0 0 8px #4a90e2aa inset;
+    border-color: var(--btn-bg);
   }
-
-  /* Remove button */
-  button.delBtn {
-    background-color: #e74c3c;
+  ul#itemList li button.delBtn {
+    background: #e74c3c;
     border: none;
-    color: white;
-    padding: 10px 18px;
-    font-weight: 600;
-    font-size: 1rem;
-    border-radius: 16px;
+    color: #fff;
+    font-weight: bold;
+    padding: 0.3rem 0.7rem;
+    border-radius: 5px;
     cursor: pointer;
-    margin-left: 20px;
-    transition: background-color 0.3s ease, transform 0.15s ease;
-    user-select: none;
-    box-shadow: 0 4px 8px rgb(231 76 60 / 0.3);
+    margin-left: 10px;
+    transition: background-color 0.3s ease;
   }
-  button.delBtn:hover {
-    background-color: #c0392b;
-    box-shadow: 0 6px 14px rgb(192 57 43 / 0.45);
-    transform: scale(1.08);
-  }
-  button.delBtn:active {
-    transform: scale(0.95);
+  ul#itemList li button.delBtn:hover {
+    background: #c0392b;
   }
 
-  /* Toggle & Share Buttons container */
-  #toggleAllBtn, #whatsappBtn, #facebookBtn, #emailBtn {
-    font-weight: 600;
-    font-size: 1.05rem;
-    padding: 12px 22px;
-    border-radius: 20px;
+  /* Buttons container */
+  .buttons-container {
+    margin-top: 1rem;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .buttons-container button {
+    flex: 1 1 150px;
+    padding: 0.6rem 1rem;
     border: none;
+    border-radius: 8px;
+    font-weight: 600;
     cursor: pointer;
-    margin-right: 12px;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-    user-select: none;
-    box-shadow: 0 3px 7px rgb(74 144 226 / 0.35);
-    color: white;
+    color: var(--btn-text);
+    background-color: var(--btn-bg);
+    box-shadow: 0 4px 8px var(--shadow);
+    transition: background-color 0.3s ease;
   }
-
-  /* Specific colors */
-  #toggleAllBtn {
-    background: linear-gradient(135deg, #4a90e2 0%, #357ABD 100%);
+  .buttons-container button:hover {
+    background-color: var(--btn-hover-bg);
   }
-  #toggleAllBtn:hover {
-    background: linear-gradient(135deg, #357ABD 0%, #2a5f9f 100%);
-    box-shadow: 0 6px 14px rgb(53 122 189 / 0.6);
-    transform: translateY(-2px);
-  }
-  #toggleAllBtn:active {
-    transform: translateY(1px) scale(0.95);
-    box-shadow: none;
-  }
-
+  /* Specific button colors */
   #whatsappBtn {
-    background: #25D366;
-    box-shadow: 0 3px 7px rgb(37 211 102 / 0.45);
+    background-color: #25d366;
   }
   #whatsappBtn:hover {
-    background: #1ebc59;
-    box-shadow: 0 6px 14px rgb(30 188 89 / 0.7);
-    transform: translateY(-2px);
+    background-color: #1ebe5a;
   }
-  #whatsappBtn:active {
-    transform: translateY(1px) scale(0.95);
-    box-shadow: none;
-  }
-
   #facebookBtn {
-    background: #3b5998;
-    box-shadow: 0 3px 7px rgb(59 89 152 / 0.45);
+    background-color: #3b5998;
   }
   #facebookBtn:hover {
-    background: #2d4373;
-    box-shadow: 0 6px 14px rgb(45 67 115 / 0.7);
-    transform: translateY(-2px);
+    background-color: #2d4373;
   }
-  #facebookBtn:active {
-    transform: translateY(1px) scale(0.95);
-    box-shadow: none;
-  }
-
   #emailBtn {
-    background: #f39c12;
-    box-shadow: 0 3px 7px rgb(243 156 18 / 0.45);
+    background-color: #dd4b39;
   }
   #emailBtn:hover {
-    background: #d17e00;
-    box-shadow: 0 6px 14px rgb(209 126 0 / 0.7);
-    transform: translateY(-2px);
+    background-color: #b63928;
   }
-  #emailBtn:active {
-    transform: translateY(1px) scale(0.95);
-    box-shadow: none;
+  #clearListBtn {
+    background-color: #888;
+  }
+  #clearListBtn:hover {
+    background-color: #666;
+  }
+  #darkModeBtn {
+    background-color: #444;
+  }
+  #darkModeBtn:hover {
+    background-color: #222;
   }
 
-  #shareButtons {
-    margin-top: 30px;
+  /* Autocomplete dropdown */
+  #autocomplete {
+    position: absolute;
+    background: var(--card-bg);
+    border: 1px solid var(--input-border);
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    width: calc(100% - 110px);
+    box-shadow: 0 4px 10px var(--shadow);
+    z-index: 1000;
+    display: none;
+    border-radius: 0 0 6px 6px;
+  }
+  #autocomplete div[role="option"] {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+  }
+  #autocomplete div[role="option"]:hover,
+  #autocomplete div[role="option"]:focus {
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    outline: none;
+  }
+
+  /* Responsive design */
+  @media (max-width: 600px) {
+    .add-item-area {
+      flex-direction: column;
+    }
+    .add-item-area input[type="text"] {
+      border-radius: 6px 6px 0 0;
+      width: 100%;
+    }
+    .add-item-area button {
+      border-radius: 0 0 6px 6px;
+      width: 100%;
+      margin-top: 0.3rem;
+    }
+    ul#itemList li {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    ul#itemList li input[type="number"],
+    ul#itemList li input.unit-input,
+    ul#itemList li button.delBtn {
+      width: 48%;
+      margin-left: 0;
+    }
+    ul#itemList li span.name {
+      flex-basis: 100%;
+    }
+    .buttons-container button {
+      flex-basis: 100%;
+    }
+    #autocomplete {
+      width: 100%;
+      left: 0;
+      right: 0;
+    }
   }
 </style>
 </head>
 <body>
+  <div class="container">
+    <h1>Grocery List</h1>
 
-<h1>Grocery List</h1>
+    <div class="add-item-area" style="position: relative;">
+      <input type="text" id="searchBar" placeholder="Add new item..." aria-label="Add new item" autocomplete="off" />
+      <button id="addItemBtn" aria-label="Add item">Add</button>
+      <div id="autocomplete" role="listbox" aria-label="Suggested items"></div>
+    </div>
 
-<input id="searchBar" type="text" placeholder="Add item by name and press Enter" aria-label="Add grocery item" autocomplete="off" aria-autocomplete="list" aria-expanded="false" />
-<div id="autocomplete" role="listbox" tabindex="-1"></div>
+    <div class="list-card" aria-live="polite" aria-relevant="additions removals" aria-atomic="true">
+      <ul id="itemList" role="list" aria-label="Grocery list"></ul>
+    </div>
 
-<ul id="itemList" aria-live="polite" aria-relevant="additions removals"></ul>
-
-<button id="toggleAllBtn" aria-label="Toggle selection of all items">Toggle All Items</button>
-
-<div id="shareButtons" aria-label="Share list on social media">
-  <button id="whatsappBtn" aria-label="Share on WhatsApp">WhatsApp</button>
-  <button id="facebookBtn" aria-label="Share on Facebook">Facebook</button>
-  <button id="emailBtn" aria-label="Share via Email">Email</button>
-</div>
+    <div class="buttons-container">
+      <button id="clearListBtn" aria-label="Clear entire list">Clear List</button>
+      <button id="whatsappBtn" aria-label="Share list on WhatsApp">WhatsApp</button>
+      <button id="facebookBtn" aria-label="Share list on Facebook">Facebook</button>
+      <button id="emailBtn" aria-label="Share list via Email">Email</button>
+      <button id="darkModeBtn" aria-label="Toggle dark mode">Toggle Dark Mode</button>
+    </div>
+  </div>
 
 <script>
   const initialItems = [
-    { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
-    { name: "Tomat", quantity: 1, unit: "kg" },
-    { name: "Championer", quantity: 1, unit: "kg" },
-    { name: "Rödlök", quantity: 1, unit: "kg" },
-    { name: "Margarin flytande rama", quantity: 1, unit: "st" },
-    { name: "Olivolja extra virgin", quantity: 5, unit: "L" },
-    { name: "Gurka ofilmad", quantity: 1, unit: "kg" },
-    { name: "Citron", quantity: 1, unit: "kg" },
-    { name: "Handskalade räkor", quantity: 1, unit: "hink" },
-    { name: "Granny Smith äpplen gröna", quantity: 0.5, unit: "kg" },
-    { name: "Ramlösa naturell i burk", quantity: 1, unit: "flak" },
-    { name: "Coca Cola i burk", quantity: 1, unit: "flak" },
-    { name: "Coca Cola Zero i burk", quantity: 1, unit: "flak" },
-    { name: "Standard mjölk", quantity: 1, unit: "L" },
-    { name: "Spray grädde", quantity: 1, unit: "st" },
-    { name: "Rama grädde", quantity: 1, unit: "L" },
-    { name: "Riven mozzarella ost", quantity: 1, unit: "påse" },
-    { name: "Riven grano padano", quantity: 1, unit: "påse" },
-    { name: "Smör red label Arla", quantity: 500, unit: "g" },
-    { name: "Bakad potatis", quantity: 15, unit: "st" },
-    { name: "Spaghetti", quantity: 5, unit: "kg" },
-    { name: "Chèvre rulle", quantity: 1, unit: "st" },
-    { name: "Mospotatis chefs cut", quantity: 1, unit: "påse" },
-    { name: "Ruccola", quantity: 1, unit: "ask" },
-    { name: "Lime", quantity: 1, unit: "kg" },
-    { name: "Basilika", quantity: 1, unit: "ask" },
-    { name: "Färsk mynta", quantity: 1, unit: "knippe" },
-    { name: "Apelsin", quantity: 1, unit: "kg" },
-    { name: "Salami Milano", quantity: 1, unit: "ask" },
-    { name: "Stenbitsrom", quantity: 1, unit: "burk" },
-    { name: "Kokta ägg skalade", quantity: 1, unit: "hink" },
-    { name: "Jordnötter saltade", quantity: 1, unit: "påse" },
-    { name: "Valnötskärnor", quantity: 1, unit: "påse" },
-    { name: "Vitlökskrutonger", quantity: 1, unit: "påse" },
-    { name: "Grillad kycklingbröst fryst", quantity: 1, unit: "kartong" },
-    { name: "Dill", quantity: 1, unit: "knippe" },
-    { name: "Tvättad kul potatis", quantity: 1, unit: "kg" },
-    { name: "Roman huvuden", quantity: 1, unit: "st" },
-    { name: "Godmorgon apelsinjuice", quantity: 1, unit: "st" },
-    { name: "Godmorgon äpple juice", quantity: 1, unit: "st" },
-    { name: "Sprite i burk", quantity: 1, unit: "flak" },
     { name: "Julmust i burk", quantity: 1, unit: "flak" },
     { name: "Bananer", quantity: 1, unit: "kg" },
     { name: "Vitamin well", quantity: 1, unit: "flak" },
@@ -310,7 +314,6 @@
     { name: "Krossade tomater", quantity: 1, unit: "burk" },
     { name: "Tacokrydda", quantity: 1, unit: "påse" },
     { name: "Jalapenos", quantity: 1, unit: "burk" },
-    { name: "Krossade tomater", quantity: 1, unit: "burk" },
     { name: "Chili con carne krydda", quantity: 1, unit: "påse" },
     { name: "Svarta bönor", quantity: 1, unit: "burk" },
     { name: "Fryst mango", quantity: 1, unit: "påse" },
@@ -327,9 +330,25 @@
   const itemList = document.getElementById('itemList');
   const searchBar = document.getElementById('searchBar');
   const autocomplete = document.getElementById('autocomplete');
+  const addItemBtn = document.getElementById('addItemBtn');
+  const clearListBtn = document.getElementById('clearListBtn');
+  const whatsappBtn = document.getElementById('whatsappBtn');
+  const facebookBtn = document.getElementById('facebookBtn');
+  const emailBtn = document.getElementById('emailBtn');
+  const darkModeBtn = document.getElementById('darkModeBtn');
 
+  // Render list function
   function renderList() {
     itemList.innerHTML = '';
+    if(items.length === 0){
+      const emptyMsg = document.createElement('li');
+      emptyMsg.textContent = "Your list is empty.";
+      emptyMsg.style.textAlign = "center";
+      emptyMsg.style.color = "var(--btn-bg)";
+      emptyMsg.style.fontWeight = "bold";
+      itemList.appendChild(emptyMsg);
+      return;
+    }
     items.forEach((item, i) => {
       const li = document.createElement('li');
       li.setAttribute('role', 'listitem');
@@ -379,21 +398,41 @@
     });
   }
 
-  // Search and add new items with autocomplete
+  // Add item function (with validation)
+  function addItem(name) {
+    name = name.trim();
+    if(name === '') return;
+    // Check if item already exists (case-insensitive)
+    const exists = items.find(i => i.name.toLowerCase() === name.toLowerCase());
+    if (exists) {
+      alert("Item already in the list!");
+      return;
+    }
+    items.push({ name, quantity: 1, unit: '' });
+    renderList();
+  }
+
+  // Add item button click
+  addItemBtn.addEventListener('click', () => {
+    addItem(searchBar.value);
+    searchBar.value = '';
+    autocomplete.style.display = 'none';
+    searchBar.setAttribute('aria-expanded', 'false');
+    searchBar.focus();
+  });
+
+  // Add item with Enter key
   searchBar.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && searchBar.value.trim() !== '') {
-      const name = searchBar.value.trim();
-      const existing = items.find(i => i.name.toLowerCase() === name.toLowerCase());
-      if (!existing) {
-        items.push({ name, quantity: 1, unit: '' });
-        renderList();
-      }
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addItem(searchBar.value);
       searchBar.value = '';
       autocomplete.style.display = 'none';
       searchBar.setAttribute('aria-expanded', 'false');
     }
   });
 
+  // Autocomplete on input
   searchBar.addEventListener('input', () => {
     const val = searchBar.value.trim().toLowerCase();
     if (val.length === 0) {
@@ -401,6 +440,7 @@
       searchBar.setAttribute('aria-expanded', 'false');
       return;
     }
+    // Filter groceries that start with val, exclude already in list
     const matches = groceries.filter(g => g.toLowerCase().startsWith(val) && !items.some(i => i.name.toLowerCase() === g.toLowerCase()));
     autocomplete.innerHTML = '';
     if (matches.length > 0) {
@@ -410,14 +450,13 @@
         div.tabIndex = 0;
         div.setAttribute('role', 'option');
         div.addEventListener('click', () => {
-          items.push({ name: match, quantity: 1, unit: '' });
-          renderList();
-          autocomplete.style.display = 'none';
+          addItem(match);
           searchBar.value = '';
-          searchBar.focus();
+          autocomplete.style.display = 'none';
           searchBar.setAttribute('aria-expanded', 'false');
+          searchBar.focus();
         });
-        div.addEventListener('keydown', e => {
+        div.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             div.click();
@@ -433,32 +472,51 @@
     }
   });
 
-  // Toggle all button
-  document.getElementById('toggleAllBtn').addEventListener('click', () => {
-    if (items.length > 0) {
-      items = [];
-    } else {
-      items = [...initialItems];
+  // Clicking outside closes autocomplete
+  document.addEventListener('click', (e) => {
+    if (!autocomplete.contains(e.target) && e.target !== searchBar) {
+      autocomplete.style.display = 'none';
+      searchBar.setAttribute('aria-expanded', 'false');
     }
-    renderList();
   });
 
-  // Share buttons
-  function generateShareText() {
-    return items.map(i => `${i.name}: ${i.quantity} ${i.unit}`).join('\n');
+  // Clear list button
+  clearListBtn.addEventListener('click', () => {
+    if(confirm('Are you sure you want to clear the entire list?')) {
+      items = [];
+      renderList();
+    }
+  });
+
+  // Sharing functions
+  function shareList(platform) {
+    if (items.length === 0) {
+      alert("List is empty to share!");
+      return;
+    }
+    const textLines = items.map(i => `${i.quantity} ${i.unit} ${i.name}`.trim());
+    const text = encodeURIComponent("Grocery List:\n" + textLines.join('\n'));
+
+    if (platform === 'whatsapp') {
+      const url = `https://wa.me/?text=${text}`;
+      window.open(url, '_blank');
+    } else if (platform === 'facebook') {
+      // Facebook share can use a text-only page or fallback to generic share
+      alert("Facebook sharing is not supported for text only. Please copy the list manually.");
+    } else if (platform === 'email') {
+      const subject = encodeURIComponent("Grocery List");
+      const mailto = `mailto:?subject=${subject}&body=${textLines.join('\n')}`;
+      window.location.href = mailto;
+    }
   }
 
-  document.getElementById('whatsappBtn').addEventListener('click', () => {
-    const text = encodeURIComponent(generateShareText());
-    window.open(`https://wa.me/?text=${text}`, '_blank');
-  });
-  document.getElementById('facebookBtn').addEventListener('click', () => {
-    const text = encodeURIComponent(generateShareText());
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=&quote=${text}`, '_blank');
-  });
-  document.getElementById('emailBtn').addEventListener('click', () => {
-    const text = encodeURIComponent(generateShareText());
-    window.location.href = `mailto:?subject=Grocery List&body=${text}`;
+  whatsappBtn.addEventListener('click', () => shareList('whatsapp'));
+  facebookBtn.addEventListener('click', () => shareList('facebook'));
+  emailBtn.addEventListener('click', () => shareList('email'));
+
+  // Dark mode toggle
+  darkModeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
   });
 
   // Initial render
@@ -466,6 +524,7 @@
 </script>
 </body>
 </html>
+
 
 
 
