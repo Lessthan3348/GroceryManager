@@ -9,11 +9,11 @@
       font-family: Arial, sans-serif;
       margin: 20px;
       background-image: url('https://images.unsplash.com/photo-1662284972119-b83a58515a15?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  color: #222; /* keep your text color for contrast */
-  transition: background-color 0.3s ease, color 0.3s ease;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #222;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
     h1 {
       color: #ff5722;
@@ -133,7 +133,7 @@
 
   <script>
     const items = [
-  { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
+      { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
   { name: "Tomat", quantity: 1, unit: "kg" },
   { name: "Championer", quantity: 1, unit: "kg" },
   { name: "Rödlök", quantity: 1, unit: "kg" },
@@ -191,15 +191,25 @@
     let showAllItems = false;
 
     function saveToStorage(key, value) {
-      localStorage.setItem(key, JSON.stringify(value));
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (e) {
+        console.error("LocalStorage is not accessible.");
+      }
     }
 
     function loadFromStorage(key, defaultValue) {
-      const saved = localStorage.getItem(key);
-      return saved ? JSON.parse(saved) : defaultValue;
+      try {
+        const saved = localStorage.getItem(key);
+        return saved ? JSON.parse(saved) : defaultValue;
+      } catch (e) {
+        console.error("LocalStorage is not accessible.");
+        return defaultValue;
+      }
     }
 
     function addItem(item) {
+      if (addedItems.some((i) => i.name === item.name)) return;
       addedItems.push({ ...item });
       saveToStorage("groceryList", addedItems);
       renderAddedList();
@@ -211,12 +221,6 @@
       saveToStorage("groceryList", addedItems);
       renderAddedList();
       renderItemsList(filterItems(searchBar.value));
-    }
-
-    function updateItemDetails(index, field, value) {
-      addedItems[index][field] = value;
-      saveToStorage("groceryList", addedItems);
-      renderAddedList();
     }
 
     function renderItemsList(filteredItems) {
@@ -242,65 +246,14 @@
       }
     }
 
-    function renderAddedList() {
-      addedList.innerHTML = "";
-      addedItems.forEach((item, index) => {
-        const li = document.createElement("li");
-
-        const name = document.createElement("span");
-        name.textContent = `${item.name}: `;
-
-        const quantityInput = document.createElement("input");
-        quantityInput.type = "number";
-        quantityInput.value = item.quantity;
-        quantityInput.onchange = (e) =>
-          updateItemDetails(index, "quantity", parseFloat(e.target.value));
-
-        const unitInput = document.createElement("input");
-        unitInput.type = "text";
-        unitInput.value = item.unit;
-        unitInput.onchange = (e) => updateItemDetails(index, "unit", e.target.value);
-
-        const btn = document.createElement("button");
-        btn.textContent = "Remove";
-        btn.onclick = () => removeItem(item.name);
-
-        li.appendChild(name);
-        li.appendChild(quantityInput);
-        li.appendChild(unitInput);
-        li.appendChild(btn);
-
-        addedList.appendChild(li);
-      });
-    }
-
     function filterItems(query) {
       return items.filter((item) =>
         item.name.toLowerCase().includes(query.trim().toLowerCase())
       );
     }
 
-    function renderAutocomplete(filteredItems) {
-      autocomplete.innerHTML = "";
-      filteredItems.forEach((item) => {
-        const div = document.createElement("div");
-        div.textContent = item.name;
-        div.onclick = () => {
-          searchBar.value = item.name;
-          autocomplete.innerHTML = "";
-          renderItemsList(filterItems(item.name));
-        };
-        autocomplete.appendChild(div);
-      });
-    }
-
-    function toggleDarkMode() {
-      const isDark = document.body.classList.toggle("dark");
-      saveToStorage("darkMode", isDark);
-    }
-
     searchBar.addEventListener("input", () => {
-      const query = searchBar.value;
+      const query = searchBar.value.trim();
       renderAutocomplete(filterItems(query));
       renderItemsList(filterItems(query));
     });
@@ -311,13 +264,11 @@
       renderItemsList(filterItems(""));
     });
 
-    darkModeToggle.addEventListener("click", toggleDarkMode);
+    darkModeToggle.addEventListener("click", () => {
+      const isDark = document.body.classList.toggle("dark");
+      saveToStorage("darkMode", isDark);
+    });
 
-    addedItems = loadFromStorage("groceryList", []);
-    const isDark = loadFromStorage("darkMode", false);
-    if (isDark) {
-      document.body.classList.add("dark");
-    }
     renderAddedList();
     renderItemsList(filterItems(""));
     // Add this near the end of your script, after renderAddedList() and renderItemsList()
