@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Grocery Manager</title>
   <style>
     body {
@@ -17,32 +17,8 @@
     h1 {
       color: #ff5722;
       font-size: 2.5rem;
+      margin-bottom: 10px;
     }
-    input, button {
-      margin: 10px 0;
-      padding: 15px 12px;
-      border: none;
-      border-radius: 5px;<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grocery Manager</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80');
-      background-size: cover;
-      background-position: center;
-      color: #222;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    h1 {
-      color: #ff5722;
-      font-size: 2.5rem;
-    }
-
     input, button {
       margin: 10px 0;
       padding: 14px 18px;
@@ -55,7 +31,6 @@
       font-weight: 600;
       user-select: none;
     }
-
     input {
       width: 100%;
       border: 1.5px solid #ccc;
@@ -63,13 +38,11 @@
       background: #fff;
       color: #222;
     }
-
     input:focus {
       border-color: #ff5722;
       box-shadow: 0 0 8px rgba(255,87,34,0.6);
       outline: none;
     }
-
     button {
       background-color: #ff5722;
       color: white;
@@ -78,19 +51,16 @@
       text-transform: uppercase;
       box-shadow: 0 4px 12px rgba(255, 87, 34, 0.4);
     }
-
     button:hover, button:focus {
       background-color: #e64a19;
       box-shadow: 0 6px 16px rgba(230, 74, 25, 0.7);
       outline: none;
       transform: scale(1.05);
     }
-
     button:active {
       transform: scale(0.98);
       box-shadow: 0 2px 6px rgba(230, 74, 25, 0.8);
     }
-
     ul {
       list-style-type: none;
       padding: 0;
@@ -105,7 +75,6 @@
       align-items: center;
       flex-wrap: wrap;
     }
-
     li input[type="number"],
     li input[type="text"] {
       width: 70px;
@@ -115,12 +84,10 @@
       border-radius: 4px;
       font-size: 1rem;
     }
-
     #darkModeToggle {
       background-color: #444;
       margin-bottom: 15px;
     }
-
     #autocomplete {
       position: absolute;
       z-index: 1000;
@@ -132,16 +99,13 @@
       max-height: 150px;
       overflow-y: auto;
     }
-
     #autocomplete div {
       padding: 10px;
       cursor: pointer;
     }
-
     #autocomplete div:hover {
       background-color: #f0f0f0;
     }
-
     /* Dark mode styles */
     body.dark {
       background-color: #121212;
@@ -173,7 +137,6 @@
       background-color: #222;
       color: #ddd;
     }
-
     /* Responsive adjustments */
     @media (max-width: 600px) {
       input, button {
@@ -181,13 +144,11 @@
         font-size: 0.9rem;
         border-radius: 10px;
       }
-
       button {
         width: 100%;
         margin-top: 8px;
       }
     }
-
     /* Buttons inside list items for better spacing */
     li button {
       min-width: 100px;
@@ -203,8 +164,8 @@
   <h1>Grocery Manager</h1>
   <button id="darkModeToggle">Toggle Dark Mode</button>
   <div style="position: relative;">
-    <input type="text" id="searchBar" placeholder="Search for items..." />
-    <div id="autocomplete"></div>
+    <input type="text" id="searchBar" placeholder="Search for items..." autocomplete="off"/>
+    <div id="autocomplete" style="display:none;"></div>
   </div>
   <button id="toggleAllBtn">Show All Items</button>
   <ul id="itemsList"></ul>
@@ -212,53 +173,53 @@
   <ul id="addedList"></ul>
 
   <script>
-   const items = [
-  { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
-  { name: "Tomat", quantity: 1, unit: "kg" },
-  { name: "Championer", quantity: 1, unit: "kg" },
-  { name: "Rödlök", quantity: 1, unit: "kg" },
-  { name: "Margarin flytande rama", quantity: 1, unit: "st" },
-  { name: "Olivolja extra virgin", quantity: 5, unit: "L" },
-  { name: "Gurka ofilmad", quantity: 1, unit: "kg" },
-  { name: "Citron", quantity: 1, unit: "kg" },
-  { name: "Handskalade räkor", quantity: 1, unit: "hink" },
-  { name: "Granny Smith äpplen gröna", quantity: 0.5, unit: "kg" },
-  { name: "Ramlösa naturell i burk", quantity: 1, unit: "flak" },
-  { name: "Coca Cola i burk", quantity: 1, unit: "flak" },
-  { name: "Coca Cola Zero i burk", quantity: 1, unit: "flak" },
-  { name: "Standard mjölk", quantity: 1, unit: "L" },
-  { name: "Spray grädde", quantity: 1, unit: "st" },
-  { name: "Rama grädde", quantity: 1, unit: "L" },
-  { name: "Riven mozzarella ost", quantity: 1, unit: "påse" },
-  { name: "Riven grano padano", quantity: 1, unit: "påse" },
-  { name: "Smör red label Arla", quantity: 500, unit: "g" },
-  { name: "Bakad potatis", quantity: 15, unit: "st" },
-  { name: "Spaghetti", quantity: 5, unit: "kg" },
-  { name: "Chèvre rulle", quantity: 1, unit: "st" },
-  { name: "Mospotatis chefs cut", quantity: 1, unit: "påse" },
-  { name: "Ruccola", quantity: 1, unit: "ask" },
-  { name: "Lime", quantity: 1, unit: "kg" },
-  { name: "Basilika", quantity: 1, unit: "ask" },
-  { name: "Färsk mynta", quantity: 1, unit: "knippe" },
-  { name: "Apelsin", quantity: 1, unit: "kg" },
-  { name: "Salami Milano", quantity: 1, unit: "ask" },
-  { name: "Stenbitsrom", quantity: 1, unit: "burk" },
-  { name: "Kokta ägg skalade", quantity: 1, unit: "hink" },
-  { name: "Jordnötter saltade", quantity: 1, unit: "påse" },
-  { name: "Valnötskärnor", quantity: 1, unit: "påse" },
-  { name: "Vitlökskrutonger", quantity: 1, unit: "påse" },
-  { name: "Grillad kycklingbröst fryst", quantity: 1, unit: "kartong" },
-  { name: "Dill", quantity: 1, unit: "knippe" },
-  { name: "Tvättad kul potatis", quantity: 1, unit: "kg" },
-  { name: "Roman huvuden", quantity: 1, unit: "st" },
-  { name: "Godmorgon apelsinjuice", quantity: 1, unit: "st" },
-  { name: "Godmorgon äpple juice", quantity: 1, unit: "st" },
-  { name: "Sprite i burk", quantity: 1, unit: "flak" },
-  { name: "Mozzarella bollar", quantity: 1, unit: "kartong" },
-  { name: "Prochutto crudo", quantity: 1, unit: "ask" },
-  { name: "Fryst lingon", quantity: 1, unit: "kartong" },
-  { name: "Crisp sallad", quantity: 1, unit: "st" }
-];
+    const items = [
+      { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
+      { name: "Tomat", quantity: 1, unit: "kg" },
+      { name: "Championer", quantity: 1, unit: "kg" },
+      { name: "Rödlök", quantity: 1, unit: "kg" },
+      { name: "Margarin flytande rama", quantity: 1, unit: "st" },
+      { name: "Olivolja extra virgin", quantity: 5, unit: "L" },
+      { name: "Gurka ofilmad", quantity: 1, unit: "kg" },
+      { name: "Citron", quantity: 1, unit: "kg" },
+      { name: "Handskalade räkor", quantity: 1, unit: "hink" },
+      { name: "Granny Smith äpplen gröna", quantity: 0.5, unit: "kg" },
+      { name: "Ramlösa naturell i burk", quantity: 1, unit: "flak" },
+      { name: "Coca Cola i burk", quantity: 1, unit: "flak" },
+      { name: "Coca Cola Zero i burk", quantity: 1, unit: "flak" },
+      { name: "Standard mjölk", quantity: 1, unit: "L" },
+      { name: "Spray grädde", quantity: 1, unit: "st" },
+      { name: "Rama grädde", quantity: 1, unit: "L" },
+      { name: "Riven mozzarella ost", quantity: 1, unit: "påse" },
+      { name: "Riven grano padano", quantity: 1, unit: "påse" },
+      { name: "Smör red label Arla", quantity: 500, unit: "g" },
+      { name: "Bakad potatis", quantity: 15, unit: "st" },
+      { name: "Spaghetti", quantity: 5, unit: "kg" },
+      { name: "Chèvre rulle", quantity: 1, unit: "st" },
+      { name: "Mospotatis chefs cut", quantity: 1, unit: "påse" },
+      { name: "Ruccola", quantity: 1, unit: "ask" },
+      { name: "Lime", quantity: 1, unit: "kg" },
+      { name: "Basilika", quantity: 1, unit: "ask" },
+      { name: "Färsk mynta", quantity: 1, unit: "knippe" },
+      { name: "Apelsin", quantity: 1, unit: "kg" },
+      { name: "Salami Milano", quantity: 1, unit: "ask" },
+      { name: "Stenbitsrom", quantity: 1, unit: "burk" },
+      { name: "Kokta ägg skalade", quantity: 1, unit: "hink" },
+      { name: "Jordnötter saltade", quantity: 1, unit: "påse" },
+      { name: "Valnötskärnor", quantity: 1, unit: "påse" },
+      { name: "Vitlökskrutonger", quantity: 1, unit: "påse" },
+      { name: "Grillad kycklingbröst fryst", quantity: 1, unit: "kartong" },
+      { name: "Dill", quantity: 1, unit: "knippe" },
+      { name: "Tvättad kul potatis", quantity: 1, unit: "kg" },
+      { name: "Roman huvuden", quantity: 1, unit: "st" },
+      { name: "Godmorgon apelsinjuice", quantity: 1, unit: "st" },
+      { name: "Godmorgon äpple juice", quantity: 1, unit: "st" },
+      { name: "Sprite i burk", quantity: 1, unit: "flak" },
+      { name: "Mozzarella bollar", quantity: 1, unit: "kartong" },
+      { name: "Prochutto crudo", quantity: 1, unit: "ask" },
+      { name: "Fryst lingon", quantity: 1, unit: "kartong" },
+      { name: "Crisp sallad", quantity: 1, unit: "st" }
+    ];
 
     const searchBar = document.getElementById("searchBar");
     const autocomplete = document.getElementById("autocomplete");
@@ -272,7 +233,7 @@
 
     function renderItems(filteredItems) {
       itemsList.innerHTML = "";
-      filteredItems.forEach((item, index) => {
+      filteredItems.forEach((item) => {
         const li = document.createElement("li");
         li.innerHTML = `
           <span>${item.name}</span>
@@ -284,6 +245,7 @@
         addBtn.addEventListener("click", () => {
           const qtyInput = li.querySelector("input[type='number']");
           const unitInput = li.querySelector("input[type='text']");
+          if(qtyInput.value <= 0) return alert("Quantity must be greater than 0");
           addItemToList(item.name, parseFloat(qtyInput.value), unitInput.value);
         });
         itemsList.appendChild(li);
@@ -326,7 +288,12 @@
         });
 
         qtyInput.addEventListener("change", () => {
-          addedItems[index].quantity = parseFloat(qtyInput.value) || 0;
+          if (qtyInput.value <= 0) {
+            alert("Quantity must be greater than 0");
+            qtyInput.value = item.quantity;
+            return;
+          }
+          addedItems[index].quantity = parseFloat(qtyInput.value);
         });
 
         unitInput.addEventListener("change", () => {
@@ -357,6 +324,10 @@
         url = `https://www.facebook.com/sharer/sharer.php?u=&quote=${text}`;
       }
       window.open(url, "_blank");
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
     }
 
     searchBar.addEventListener("input", () => {
@@ -394,11 +365,13 @@
       document.body.classList.toggle("dark");
     });
 
-    // Initialize empty list
+    // Initialize with empty items list
     renderItems([]);
     renderAddedList();
   </script>
 </body>
+</html>
+
 </html>
 
 
