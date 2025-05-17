@@ -131,86 +131,7 @@
   <ul id="addedList"></ul>
 
   <script>
-// Advanced Sharing System with Popular Platforms
-  const shareContainer = document.createElement("div");
-  shareContainer.style.marginTop = "20px";
-  shareContainer.style.display = "flex";
-  shareContainer.style.flexWrap = "wrap";
-  shareContainer.style.gap = "15px"; // Space between buttons
-
-  // Platform Share Buttons
-  const platforms = [
-    {
-      name: "WhatsApp",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg",
-      url: "https://wa.me/?text={text}",
-    },
-    {
-      name: "Facebook Messenger",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/1/1b/Facebook_Messenger_logo_2020.svg",
-      url: "https://www.messenger.com/t/?message={text}",
-    },
-    {
-      name: "Telegram",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg",
-      url: "https://t.me/share/url?text={text}",
-    },
-    {
-      name: "Twitter",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/6/60/Twitter_Logo_as_of_2021.svg",
-      url: "https://twitter.com/intent/tweet?text={text}",
-    },
-    {
-      name: "Email",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Gmail_Icon.svg",
-      url: "mailto:?subject=My%20Grocery%20List&body={text}",
-    },
-  ];
-
-  // Create Sharing Buttons
-  platforms.forEach((platform) => {
-    const button = document.createElement("button");
-    button.innerHTML = `
-      <img src="${platform.logo}" alt="${platform.name} Logo" style="width:20px; height:20px; vertical-align:middle; margin-right:10px;">
-      Share on ${platform.name}
-    `;
-    button.style.display = "flex";
-    button.style.alignItems = "center";
-    button.style.gap = "10px";
-    button.style.padding = "10px";
-    button.style.border = "1px solid #ccc";
-    button.style.borderRadius = "8px";
-    button.style.backgroundColor = "#f9f9f9";
-    button.style.cursor = "pointer";
-
-    // Click Event for Sharing
-    button.addEventListener("click", () => {
-      if (addedItems.length === 0) {
-        alert("Your list is empty. Add some items first.");
-        return;
-      }
-      const listText = addedItems
-        .map((item) => `${item.quantity} ${item.unit} ${item.name}`)
-        .join("\n");
-      const shareUrl = platform.url.replace("{text}", encodeURIComponent(listText));
-      window.open(shareUrl, "_blank");
-    });
-
-    shareContainer.appendChild(button);
-  });
-
-  document.body.appendChild(shareContainer);
-
-  // Example Items (Replace with dynamic logic in your app)
-  let addedItems = [
-    { name: "Apples", quantity: 5, unit: "kg" },
-    { name: "Milk", quantity: 2, unit: "liters" },
-    { name: "Bread", quantity: 1, unit: "loaf" },
-  ];
-
-  // Add item-saving logic as needed
-
-   const items = [
+    const items = [
   { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
   { name: "Tomat", quantity: 1, unit: "kg" },
   { name: "Championer", quantity: 1, unit: "kg" },
@@ -256,8 +177,7 @@
   { name: "Prochutto crudo", quantity: 1, unit: "ask" },
   { name: "Fryst lingon", quantity: 1, unit: "kartong" },
   { name: "Crisp sallad", quantity: 1, unit: "st" }
-];
-
+    ];
 
     const searchBar = document.getElementById("searchBar");
     const itemsList = document.getElementById("itemsList");
@@ -400,7 +320,6 @@
     renderAddedList();
     renderItemsList(filterItems(""));
   </script>
-  
-
 </body>
 </html>
+
