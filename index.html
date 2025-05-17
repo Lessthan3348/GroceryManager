@@ -12,6 +12,8 @@
     --dark-text: #ffffff;
     --primary-color: #6200ea;
     --secondary-color: #03dac6;
+    --btn-shadow: rgba(98, 0, 234, 0.4);
+    --btn-hover-shadow: rgba(3, 218, 198, 0.6);
   }
 
   body {
@@ -27,21 +29,6 @@
     color: var(--dark-text);
   }
 
-  .container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    background-color: var(--light-bg);
-    display: flex;
-    gap: 30px;
-  }
-
-  .dark-mode .container {
-    background-color: var(--dark-bg);
-  }
-
   h1 {
     text-align: center;
     color: var(--primary-color);
@@ -51,12 +38,80 @@
     color: var(--secondary-color);
   }
 
-  h2 {
-    margin-top: 0;
+  .container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background-color: var(--light-bg);
+    display: flex;
+    gap: 30px;
+  }
+
+  .dark-mode .container {
+    background-color: var(--dark-bg);
   }
 
   .items-list, .shopping-list {
     flex: 1;
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+
+  /* Search input with autocomplete container */
+  #search-container {
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  #search-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+
+  #search-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 8px var(--primary-color);
+  }
+
+  /* Autocomplete dropdown */
+  #autocomplete-list {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    background: var(--light-bg);
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 10;
+    border-radius: 0 0 6px 6px;
+  }
+
+  .dark-mode #autocomplete-list {
+    background: var(--dark-bg);
+    border-color: #444;
+  }
+
+  #autocomplete-list div {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  #autocomplete-list div:hover {
+    background-color: var(--secondary-color);
+    color: #000;
   }
 
   ul {
@@ -93,36 +148,55 @@
   .controls {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
   }
 
   select, input[type="number"] {
-    padding: 4px 6px;
+    padding: 6px 8px;
     border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 80px;
+    border-radius: 5px;
+    width: 90px;
+    font-size: 0.9rem;
+    transition: border-color 0.3s;
+  }
+
+  select:focus, input[type="number"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 8px var(--primary-color);
   }
 
   button {
-    padding: 6px 12px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     background-color: var(--primary-color);
     color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    box-shadow: 0 4px 8px var(--btn-shadow);
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.15s ease;
+    user-select: none;
   }
 
   button:hover {
     background-color: var(--secondary-color);
+    box-shadow: 0 6px 12px var(--btn-hover-shadow);
+    transform: scale(1.05);
+  }
+
+  button:active {
+    transform: scale(0.95);
   }
 
   .remove-btn {
     background-color: #e53935;
+    box-shadow: 0 4px 8px rgba(229, 57, 53, 0.5);
   }
 
   .remove-btn:hover {
     background-color: #b71c1c;
+    box-shadow: 0 6px 12px rgba(183, 28, 28, 0.7);
   }
 
   .share {
@@ -131,24 +205,27 @@
   }
 
   .share button {
-    margin: 0 5px;
+    margin: 0 6px;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    font-size: 1rem;
+    padding: 10px 18px;
   }
 
   .share button img {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
 
   .toggle {
     text-align: center;
-    margin: 20px 0;
+    margin: 25px 0;
   }
 
   .toggle button {
-    padding: 10px 20px;
+    padding: 12px 24px;
+    font-size: 1rem;
   }
 </style>
 </head>
@@ -157,6 +234,12 @@
   <div class="container">
     <div class="items-list">
       <h2>Available Items</h2>
+
+      <div id="search-container">
+        <input type="text" id="search-input" placeholder="Search items..." autocomplete="off" />
+        <div id="autocomplete-list"></div>
+      </div>
+
       <ul id="available-items">
         <!-- Items injected by JS -->
       </ul>
@@ -164,9 +247,7 @@
 
     <div class="shopping-list">
       <h2>My Shopping List</h2>
-      <ul id="shopping-list">
-        <!-- Added items here -->
-      </ul>
+      <ul id="shopping-list"></ul>
 
       <div class="share">
         <button onclick="shareWhatsApp()" title="Share on WhatsApp">
@@ -245,48 +326,57 @@
 
   const availableItemsEl = document.getElementById('available-items');
   const shoppingListEl = document.getElementById('shopping-list');
+  const searchInput = document.getElementById('search-input');
+  const autocompleteList = document.getElementById('autocomplete-list');
 
-  // Render available items with quantity and unit inputs + Add button
-  items.forEach(item => {
-    const li = document.createElement('li');
-    const itemNameDiv = document.createElement('div');
-    itemNameDiv.className = 'item-info';
-    itemNameDiv.textContent = item;
+  // Render all items initially
+  function renderItems(filteredItems) {
+    availableItemsEl.innerHTML = '';
+    filteredItems.forEach(item => {
+      const li = document.createElement('li');
+      const itemNameDiv = document.createElement('div');
+      itemNameDiv.className = 'item-info';
+      itemNameDiv.textContent = item;
 
-    const controlsDiv = document.createElement('div');
-    controlsDiv.className = 'controls';
+      const controlsDiv = document.createElement('div');
+      controlsDiv.className = 'controls';
 
-    // Quantity input
-    const qtyInput = document.createElement('input');
-    qtyInput.type = 'number';
-    qtyInput.min = '0.01';
-    qtyInput.step = '0.01';
-    qtyInput.value = '1';
-    qtyInput.title = 'Quantity';
+      // Quantity input
+      const qtyInput = document.createElement('input');
+      qtyInput.type = 'number';
+      qtyInput.min = '0.01';
+      qtyInput.step = '0.01';
+      qtyInput.value = '1';
+      qtyInput.title = 'Quantity';
 
-    // Unit select dropdown
-    const unitSelect = document.createElement('select');
-    units.forEach(unit => {
-      const option = document.createElement('option');
-      option.value = unit;
-      option.textContent = unit;
-      unitSelect.appendChild(option);
+      // Unit select dropdown
+      const unitSelect = document.createElement('select');
+      units.forEach(unit => {
+        const option = document.createElement('option');
+        option.value = unit;
+        option.textContent = unit;
+        unitSelect.appendChild(option);
+      });
+
+      // Add button
+      const addBtn = document.createElement('button');
+      addBtn.textContent = 'Add';
+      addBtn.onclick = () => addToShoppingList(item, qtyInput.value, unitSelect.value);
+
+      controlsDiv.appendChild(qtyInput);
+      controlsDiv.appendChild(unitSelect);
+      controlsDiv.appendChild(addBtn);
+
+      li.appendChild(itemNameDiv);
+      li.appendChild(controlsDiv);
+      availableItemsEl.appendChild(li);
     });
+  }
 
-    // Add button
-    const addBtn = document.createElement('button');
-    addBtn.textContent = 'Add';
-    addBtn.onclick = () => addToShoppingList(item, qtyInput.value, unitSelect.value);
+  // Initial render
+  renderItems(items);
 
-    controlsDiv.appendChild(qtyInput);
-    controlsDiv.appendChild(unitSelect);
-    controlsDiv.appendChild(addBtn);
-
-    li.appendChild(itemNameDiv);
-    li.appendChild(controlsDiv);
-    availableItemsEl.appendChild(li);
-  });
-
+  // Add to shopping list
   function addToShoppingList(name, quantity, unit) {
     if (!quantity || quantity <= 0) {
       alert('Please enter a valid quantity.');
@@ -317,7 +407,6 @@
   function shareFacebook() {
     const text = getShoppingListText();
     if (!text) return alert('No items to share!');
-    // Facebook sharing usually shares URLs, so share text via share dialog with a dummy url + text in quote param
     const url = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   }
@@ -350,9 +439,52 @@
     darkMode = !darkMode;
     document.body.classList.toggle('dark-mode', darkMode);
   }
+
+  // Search & autocomplete logic
+  searchInput.addEventListener('input', () => {
+    const val = searchInput.value.trim().toLowerCase();
+    if (!val) {
+      autocompleteList.innerHTML = '';
+      renderItems(items);
+      return;
+    }
+
+    // Filter items for autocomplete (max 8)
+    const matched = items.filter(i => i.toLowerCase().includes(val)).slice(0,8);
+
+    autocompleteList.innerHTML = '';
+    matched.forEach(match => {
+      const div = document.createElement('div');
+      // Highlight matched part
+      const regex = new RegExp(`(${val})`, 'gi');
+      const innerHTML = match.replace(regex, '<strong>$1</strong>');
+      div.innerHTML = innerHTML;
+
+      div.onclick = () => {
+        searchInput.value = match;
+        autocompleteList.innerHTML = '';
+        // Render only matched item (or could scroll to it)
+        renderItems([match]);
+      };
+
+      autocompleteList.appendChild(div);
+    });
+
+    // Also filter list live as user types
+    const filtered = items.filter(i => i.toLowerCase().includes(val));
+    renderItems(filtered);
+  });
+
+  // Close autocomplete if clicked outside
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !autocompleteList.contains(e.target)) {
+      autocompleteList.innerHTML = '';
+    }
+  });
 </script>
 </body>
 </html>
+
 
 
 
