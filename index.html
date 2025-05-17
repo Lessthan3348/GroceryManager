@@ -1,339 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shopping List</title>
-  <style>
-    :root {
-      --light-bg: #ffffff;
-      --light-text: #000000;
-      --dark-bg: #181818;
-      --dark-text: #ffffff;
-      --primary-color: #6200ea;
-      --secondary-color: #03dac6;
-    }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: var(--light-bg);
-      color: var(--light-text);
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .dark-mode {
-      background-color: var(--dark-bg);
-      color: var(--dark-text);
-    }
-    .container {
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      background-color: var(--light-bg);
-    }
-    .dark-mode .container {
-      background-color: var(--dark-bg);
-    }
-    h1 {
-      text-align: center;
-      color: var(--primary-color);
-    }
-    .dark-mode h1 {
-      color: var(--secondary-color);
-    }
-    .form {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .form input[type="text"],
-    .form input[type="number"],
-    .form select {
-      flex: 1;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    .form button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      background-color: var(--primary-color);
-      color: #fff;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      font-size: 16px;
-      flex-shrink: 0;
-    }
-    .form button:hover {
-      background-color: var(--secondary-color);
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px;
-      border-bottom: 1px solid #ccc;
-      font-size: 16px;
-    }
-    .dark-mode li {
-      border-color: #444;
-    }
-    li button {
-      background-color: #e53935;
-      border: none;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: background-color 0.3s;
-    }
-    li button:hover {
-      background-color: #b71c1c;
-    }
-    .share, .social-share {
-      margin-top: 20px;
-      text-align: center;
-    }
-    .share button, .social-share button {
-      padding: 10px 20px;
-      margin: 5px;
-      border: none;
-      border-radius: 5px;
-      background-color: var(--primary-color);
-      color: #fff;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      font-size: 16px;
-    }
-    .share button:hover, .social-share button:hover {
-      background-color: var(--secondary-color);
-    }
-    .toggle {
-      display: flex;
-      justify-content: center;
-      margin-top: 10px;
-    }
-    .toggle button {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background-color: var(--primary-color);
-      color: #fff;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      font-size: 16px;
-      width: 150px;
-    }
-    .toggle button:hover {
-      background-color: var(--secondary-color);
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shopping List</title>
+<style>
+  :root {
+    --light-bg: #ffffff;
+    --light-text: #000000;
+    --dark-bg: #181818;
+    --dark-text: #ffffff;
+    --primary-color: #6200ea;
+    --secondary-color: #03dac6;
+  }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--light-bg);
+    color: var(--light-text);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  .dark-mode {
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+  }
+  .container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: var(--light-bg);
+    display: flex;
+    gap: 30px;
+  }
+  .dark-mode .container {
+    background-color: var(--dark-bg);
+  }
+  h1 {
+    text-align: center;
+    color: var(--primary-color);
+  }
+  .dark-mode h1 {
+    color: var(--secondary-color);
+  }
+  .items-list, .shopping-list {
+    flex: 1;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  .dark-mode .items-list, .dark-mode .shopping-list {
+    border-color: #444;
+  }
+  h2 {
+    text-align: center;
+    margin-top: 0;
+    color: var(--primary-color);
+  }
+  .dark-mode h2 {
+    color: var(--secondary-color);
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 6px;
+    border-bottom: 1px solid #ccc;
+    font-size: 15px;
+  }
+  .dark-mode li {
+    border-color: #444;
+  }
+  li button {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    font-size: 14px;
+  }
+  li button:hover {
+    background-color: var(--secondary-color);
+  }
+  .shopping-list li button {
+    background-color: #e53935;
+  }
+  .shopping-list li button:hover {
+    background-color: #b71c1c;
+  }
+  .share {
+    text-align: center;
+    margin-top: 15px;
+    grid-column: 1 / -1;
+  }
+  .social-share button {
+    margin: 5px 8px;
+    padding: 10px 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+  }
+  .social-share button svg {
+    width: 20px;
+    height: 20px;
+  }
+  .social-share button.whatsapp {
+    background-color: #25d366;
+  }
+  .social-share button.whatsapp:hover {
+    background-color: #1ebe57;
+  }
+  .social-share button.facebook {
+    background-color: #1877f2;
+  }
+  .social-share button.facebook:hover {
+    background-color: #145dbf;
+  }
+  .social-share button.twitter {
+    background-color: #1da1f2;
+  }
+  .social-share button.twitter:hover {
+    background-color: #0d8ddb;
+  }
+  .social-share button.email {
+    background-color: #777;
+  }
+  .social-share button.email:hover {
+    background-color: #555;
+  }
+  .toggle {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .toggle button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+    width: 200px;
+  }
+  .toggle button:hover {
+    background-color: var(--secondary-color);
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Shopping List</h1>
-    <div class="form">
-      <input type="text" id="item" placeholder="Item name" />
-      <input type="number" id="quantity" placeholder="Quantity" min="0" />
-      <select id="unit">
-        <option value="kg">kg</option>
-        <option value="liters">liters</option>
-        <option value="pcs">pcs</option>
-      </select>
-      <button onclick="addItem()">Add</button>
-    </div>
-    <ul id="list"></ul>
-    
-    <div class="share">
-      <button onclick="copyToClipboard()">Copy List to Clipboard</button>
-    </div>
-
-    <div class="social-share">
-      <button onclick="shareWhatsApp()">Share on WhatsApp</button>
-      <button onclick="shareFacebook()">Share on Facebook</button>
-      <button onclick="shareTwitter()">Share on Twitter</button>
-      <button onclick="shareEmail()">Share via Email</button>
-    </div>
-
-    <div class="toggle">
-      <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
-    </div>
+<div class="container">
+  <div class="items-list">
+    <h2>Available Items</h2>
+    <ul id="available-items"></ul>
   </div>
 
-  <script>
-    const initialItems = [
-      "1 påse Napolitana salads mix",
-      "1 kg Tomat",
-      "1 kg Champinjoner",
-      "1 kg Rödlök",
-      "1 st Margarin flytande (Rama)",
-      "1 dunk Olivolja extra virgin (5 L)",
-      "1 kg Gurka (ofilmad)",
-      "1 kg Citron",
-      "1 hink Handskalade räkor",
-      "1/2 kg Granny Smith äpplen (gröna)",
-      "1 flak Ramlösa naturell (burk)",
-      "1 flak Coca Cola (burk)",
-      "1 flak Coca Cola Zero (burk)",
-      "1 liter Standard mjölk",
-      "1 spray Grädde",
-      "1 liter Rama grädde",
-      "1 påse Riven mozzarella ost",
-      "1 påse Riven Grano Padano",
-      "2 st Smör (500 gram, Red Label, Arla)",
-      "15 st Bakad potatis",
-      "5 kg Spaghetti",
-      "1 Chèvre rulle",
-      "1 påse Mospotatis (Chef’s Cut)",
-      "1 ask Ruccola",
-      "1 kg Lime",
-      "1 ask Basilika",
-      "1 knippe Färsk mynta",
-      "1 kg Apelsin",
-      "1 ask Salami Milano",
-      "1 burk Stenbitsrom",
-      "1 hink Kokta ägg (skalade)",
-      "1 påse Jordnötter (saltade)",
-      "1 påse Valnötskärnor",
-      "1 påse Vitlökskrutonger",
-      "1 kartong Grillade kycklingbröst (frysta)",
-      "1 knippe Dill",
-      "1 kg Tvättad kul potatis",
-      "1 Romansallad",
-      "1 st God Morgon apelsinjuice",
-      "1 st God Morgon äppeljuice",
-      "1 flak Sprite (burk)",
-      "1 kartong Mozzarellabollar",
-      "1 ask Prosciutto crudo",
-      "1 kartong Fryst lingon",
-      "1 Crisp sallad"
-    ];
+  <div class="shopping-list">
+    <h2>My Shopping List</h2>
+    <ul id="shopping-list"></ul>
 
-    let isDarkMode = false;
+    <div class="share social-share">
+      <button class="whatsapp" onclick="shareWhatsApp()" title="Share on WhatsApp">
+        <!-- WhatsApp SVG icon -->
+        <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M20.52 3.48a11.825 11.825 0 0 0-16.714 0 11.83 11.83 0 0 0-3.476 8.357c0 2.1.542 4.1 1.57 5.874L2 22l4.338-1.41a11.799 11.799 0 0 0 5.71 1.422 11.828 11.828 0 0 0 8.47-3.502 11.828 11.828 0 0 0 3.503-8.47 11.826 11.826 0 0 0-3.5-8.47zm-8.52 16.49a9.202 9.202 0 0 1-4.9-1.37l-.352-.209-3.234 1.05 1.076-3.148-.23-.36a9.07 9.07 0 0 1 15.695-10.434 9.18 9.18 0 0 1-7.955 14.47z"/><path d="M16.005 13.224c-.265-.132-1.56-.77-1.803-.858-.243-.088-.42-.132-.597.132s-.684.858-.837 1.034c-.153.176-.307.198-.57.066-.264-.132-1.113-.409-2.12-1.312-.785-.7-1.314-1.56-1.47-1.834-.154-.275-.017-.42.115-.552.118-.117.264-.306.397-.459.132-.153.176-.265.264-.44.088-.176.044-.33-.022-.46-.066-.132-.597-1.44-.818-1.97-.215-.517-.434-.45-.597-.46-.154-.01-.33-.01-.504-.01-.176 0-.46.066-.7.33-.243.264-.928.91-.928 2.215 0 1.305.95 2.57 1.083 2.745.132.176 1.87 2.855 4.53 4.003.633.273 1.127.436 1.514.557.636.205 1.216.176 1.675.107.511-.076 1.56-.637 1.78-1.252.22-.615.22-1.143.154-1.252-.066-.11-.243-.176-.508-.308z"/></svg>
+        WhatsApp
+      </button>
+      <button class="facebook" onclick="shareFacebook()" title="Share on Facebook">
+        <!-- Facebook SVG icon -->
+        <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M22.675 0h-21.35C.59 0 0 .593 0 1.326v21.348C0 23.406.59 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.41c0-3.1 1.893-4.788 4.658-4.788 1.325 0 2.466.099 2.798.143v3.243l-1.92.001c-1.506 0-1.796.716-1.796 1.764v2.314h3.59l-.467 3.622h-3.123V24h6.116c.73 0 1.324-.594 1.324-1.326V1.326C24 .593 23.406 0 22.675 0z"/></svg>
+        Facebook
+      </button>
+      <button class="twitter" onclick="shareTwitter()" title="Share on Twitter">
+        <!-- Twitter SVG icon -->
+        <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M23.954 4.569a10.05 10.05 0 0 1-2.825.775 4.958 4.958 0 0 0 2.163-2.723 9.904 9.904 0 0 1-3.127 1.184 4.932 4.932 0 0 0-8.4 4.49A13.978 13.978 0 0 1 1.671 3.149 4.822 4.822 0 0 0 3.18 9.723a4.93 4.93 0 0 1-2.23-.616c-.054 2.281 1.581 4.415 3.949 4.89a4.996 4.996 0 0 1-2.224.085c.623 1.94 2.432 3.355 4.576 3.395A9.867 9.867 0 0 1 0 19.54a13.88 13.88 0 0 0 7.548 2.209c9.142 0 14.307-7.721 13.995-14.646a9.936 9.936 0 0 0 2.411-2.534z"/></svg>
+        Twitter
+      </button>
+      <button class="email" onclick="shareEmail()" title="Share via Email">
+        <!-- Email SVG icon -->
+        <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email
+      </button>
+    </div>
+  </div>
+</div>
 
-    function createListItem(text) {
+<div class="toggle">
+  <button id="mode-toggle">Switch to Dark Mode</button>
+</div>
+
+<script>
+  const items = [
+    "Milk",
+    "Eggs",
+    "Bread",
+    "Butter",
+    "Cheese",
+    "Apples",
+    "Bananas",
+    "Chicken",
+    "Rice",
+    "Pasta"
+  ];
+
+  const availableItemsList = document.getElementById("available-items");
+  const shoppingList = document.getElementById("shopping-list");
+
+  function renderAvailableItems() {
+    availableItemsList.innerHTML = "";
+    items.forEach(item => {
+      // Check if item already in shopping list, disable add if yes
+      const inList = [...shoppingList.querySelectorAll("li")].some(li => li.dataset.name === item);
       const li = document.createElement("li");
-      li.textContent = text;
+      li.textContent = item;
 
-      const removeBtn = document.createElement("button");
-      removeBtn.textContent = "Remove";
-      removeBtn.onclick = () => li.remove();
+      const btn = document.createElement("button");
+      btn.textContent = "Add";
+      btn.disabled = inList;
+      btn.onclick = () => addItem(item);
+      li.appendChild(btn);
 
-      li.appendChild(removeBtn);
-      return li;
+      availableItemsList.appendChild(li);
+    });
+  }
+
+  function addItem(item) {
+    // Add to shopping list if not already there
+    if (![...shoppingList.querySelectorAll("li")].some(li => li.dataset.name === item)) {
+      const li = document.createElement("li");
+      li.dataset.name = item;
+      li.textContent = item;
+
+      const btn = document.createElement("button");
+      btn.textContent = "Remove";
+      btn.onclick = () => {
+        shoppingList.removeChild(li);
+        renderAvailableItems(); // Re-enable Add buttons
+      };
+      li.appendChild(btn);
+
+      shoppingList.appendChild(li);
+      renderAvailableItems(); // Disable Add button for this item
     }
+  }
 
-    function loadInitialItems() {
-      const list = document.getElementById("list");
-      initialItems.forEach(item => {
-        list.appendChild(createListItem(item));
-      });
+  // Initial rendering
+  renderAvailableItems();
+
+  // Dark mode toggle
+  const toggleBtn = document.getElementById("mode-toggle");
+  toggleBtn.onclick = () => {
+    document.body.classList.toggle("dark-mode");
+    if(document.body.classList.contains("dark-mode")){
+      toggleBtn.textContent = "Switch to Light Mode";
+    } else {
+      toggleBtn.textContent = "Switch to Dark Mode";
     }
+  };
 
-    function addItem() {
-      const itemInput = document.getElementById("item");
-      const quantityInput = document.getElementById("quantity");
-      const unitSelect = document.getElementById("unit");
+  // Share handlers (simple alert demo)
+  function shareWhatsApp() {
+    alert("Sharing on WhatsApp: " + getShoppingListText());
+  }
+  function shareFacebook() {
+    alert("Sharing on Facebook: " + getShoppingListText());
+  }
+  function shareTwitter() {
+    alert("Sharing on Twitter: " + getShoppingListText());
+  }
+  function shareEmail() {
+    alert("Sharing via Email: " + getShoppingListText());
+  }
 
-      const itemName = itemInput.value.trim();
-      const quantity = quantityInput.value.trim();
-      const unit = unitSelect.value;
-
-      if (itemName && quantity) {
-        const list = document.getElementById("list");
-        const fullText = `${quantity} ${unit} ${itemName}`;
-        list.appendChild(createListItem(fullText));
-
-        itemInput.value = "";
-        quantityInput.value = "";
-        unitSelect.selectedIndex = 0;
-      } else {
-        alert("Please enter both item name and quantity.");
-      }
-    }
-
-    function getListText() {
-      const listItems = Array.from(document.querySelectorAll("#list li"));
-      return listItems
-        .map(li => li.textContent.replace("Remove", "").trim())
-        .join("\n");
-    }
-
-    function copyToClipboard() {
-      const text = getListText();
-      if (!text) {
-        alert("No items to copy.");
-        return;
-      }
-      navigator.clipboard.writeText(text).then(() => {
-        alert("List copied to clipboard!");
-      });
-    }
-
-    function shareWhatsApp() {
-      const text = encodeURIComponent(getListText());
-      if (!text) {
-        alert("No items to share.");
-        return;
-      }
-      const url = `https://wa.me/?text=${text}`;
-      window.open(url, "_blank");
-    }
-
-    function shareFacebook() {
-      const text = encodeURIComponent(getListText());
-      if (!text) {
-        alert("No items to share.");
-        return;
-      }
-      // Facebook sharing only supports URLs, so create a data URL or fallback to alert
-      // We'll share as a Facebook post message via sharer.php with a dummy URL + text as quote
-      const urlToShare = encodeURIComponent("https://example.com"); // Replace with your page or a meaningful link
-      const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${urlToShare}&quote=${text}`;
-      window.open(fbUrl, "_blank");
-    }
-
-    function shareTwitter() {
-      const text = encodeURIComponent(getListText());
-      if (!text) {
-        alert("No items to share.");
-        return;
-      }
-      const url = `https://twitter.com/intent/tweet?text=${text}`;
-      window.open(url, "_blank");
-    }
-
-    function shareEmail() {
-      const text = encodeURIComponent(getListText());
-      if (!text) {
-        alert("No items to share.");
-        return;
-      }
-      const subject = encodeURIComponent("My Shopping List");
-      const mailto = `mailto:?subject=${subject}&body=${text}`;
-      window.location.href = mailto;
-    }
-
-    function toggleDarkMode() {
-      isDarkMode = !isDarkMode;
-      document.body.classList.toggle("dark-mode", isDarkMode);
-    }
-
-    window.onload = () => {
-      loadInitialItems();
-    };
-  </script>
+  function getShoppingListText() {
+    const items = [...shoppingList.querySelectorAll("li")].map(li => li.dataset.name);
+    if(items.length === 0) return "No items in shopping list.";
+    return "My Shopping List:\n" + items.join("\n");
+  }
+</script>
 </body>
 </html>
+
 
