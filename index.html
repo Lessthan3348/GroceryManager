@@ -3,221 +3,267 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grocery List with Quantity & Unit Edit + Share</title>
+<title>Grocery List</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
-  /* Background and layout */
   body {
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    min-height: 100vh;
-    background: 
-      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0,0,0,0.5)),
-      url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+    margin: 0; padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
     background-size: cover;
-    color: #f0f0f5;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+    color: #222;
+    transition: background-color 0.5s, color 0.5s;
+  }
+  body.dark {
+    background: #121212;
+    color: #eee;
+  }
+  .container {
+    max-width: 1000px;
+    margin: 1rem auto;
+    background: rgba(255 255 255 / 0.85);
+    padding: 1rem 2rem 3rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.3);
+    transition: background 0.5s, color 0.5s;
+  }
+  body.dark .container {
+    background: rgba(0 0 0 / 0.85);
+    color: #eee;
   }
 
-  #container {
-    background: rgba(20, 20, 30, 0.85);
-    border-radius: 16px;
-    padding: 30px 25px 40px;
-    max-width: 700px;
-    width: 100%;
-    box-shadow: 0 0 30px rgba(0,0,0,0.7);
+  header {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 2rem;
+  }
+  button#darkModeToggle {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgb(0 123 255 / 0.5);
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  button#darkModeToggle:hover {
+    background: #0056b3;
+    transform: scale(1.1);
+  }
+
+  main {
+    display: flex;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  section {
+    flex: 1 1 400px;
+    min-width: 280px;
+    max-height: 600px;
+    overflow-y: auto;
+    background: rgba(255 255 255 / 0.95);
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: 0 5px 15px rgb(0 0 0 / 0.1);
+    transition: background 0.5s;
+  }
+  body.dark section {
+    background: rgba(20 20 20 / 0.95);
   }
 
   h2 {
-    color: #a9c9ff;
-    margin-bottom: 20px;
+    margin-top: 0;
     text-align: center;
-    text-shadow: 0 0 5px #3d6efd;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
   }
 
   ul {
     list-style: none;
-    padding: 0;
-    margin: 0 0 30px;
+    margin: 0; padding: 0;
   }
-
-  /* Items & grocery list styling */
-  .item, .grocery-item {
+  li.item, li.grocery-item {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    margin: 8px 0;
-    padding: 12px 18px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.1);
-    align-items: center;
-    box-shadow: 0 2px 12px rgb(0 0 0 / 0.3);
-    transition: background-color 0.4s ease, box-shadow 0.3s ease;
+    padding: 0.4rem 0.6rem;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s;
   }
-  .item:hover, .grocery-item:hover {
-    background-color: rgba(61, 110, 253, 0.3);
-    box-shadow: 0 4px 25px rgb(61 110 253 / 0.8);
+  body.dark li.item, body.dark li.grocery-item {
+    border-color: #444;
   }
-
-  button {
-    padding: 8px 18px;
-    border: none;
-    border-radius: 25px;
-    background: linear-gradient(135deg, #3d6efd, #3354cc);
-    color: white;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 15px;
-    box-shadow: 0 6px 15px rgba(61, 110, 253, 0.5);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-    user-select: none;
+  li.item:hover {
+    background: #e7f1ff;
   }
-  button:disabled {
-    cursor: not-allowed;
-    opacity: 0.4;
-    background: #4a4a4a;
-    box-shadow: none;
-  }
-  button:not(:disabled):hover {
-    background: linear-gradient(135deg, #2746c9, #1a2a7a);
-    box-shadow: 0 8px 20px rgba(26, 42, 122, 0.9);
-    transform: scale(1.12) rotate(-2deg);
-  }
-  button:not(:disabled):active {
-    transform: scale(0.95) rotate(0deg);
-    box-shadow: 0 3px 8px rgba(26, 42, 122, 0.7);
+  body.dark li.item:hover {
+    background: #333a55;
   }
 
-  /* Share buttons */
-  #shareButtons {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin-top: auto;
-  }
-  .share-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+  li.item button,
+  li.grocery-item button {
+    background: #28a745;
     border: none;
     color: white;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
     cursor: pointer;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-  }
-  .share-btn:hover {
-    transform: scale(1.3) rotate(10deg);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.7);
-  }
-  .whatsapp { background-color: #25D366; }
-  .facebook { background-color: #1877F2; }
-  .email { background-color: #D44638; }
-  .twitter { background-color: #1DA1F2; }
-
-  /* Inputs in grocery list */
-  input[type="text"], input[type="number"] {
-    width: 65px;
-    padding: 6px 8px;
-    margin-left: 10px;
-    border-radius: 6px;
-    border: none;
-    font-size: 14px;
     font-weight: 600;
-    text-align: center;
-    background: rgba(255 255 255 / 0.15);
-    color: #fff;
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.3);
-    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 6px rgb(40 167 69 / 0.4);
+    transition: background-color 0.3s, transform 0.3s;
   }
-  input[type="text"]:focus, input[type="number"]:focus {
-    outline: none;
-    background: rgba(255 255 255 / 0.3);
-    box-shadow: 0 0 10px #3d6efd;
-    color: #e0eaff;
+  li.item button:hover,
+  li.grocery-item button:hover {
+    background: #19692c;
+    transform: scale(1.1);
+  }
+  body.dark li.item button,
+  body.dark li.grocery-item button {
+    background: #66bb6a;
+    box-shadow: 0 4px 6px rgb(102 187 106 / 0.7);
+  }
+  body.dark li.item button:hover,
+  body.dark li.grocery-item button:hover {
+    background: #2e7d32;
   }
 
-  /* Layout for input group */
+  li.grocery-item {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  li.grocery-item span {
+    flex: 1 1 100%;
+    font-weight: 600;
+  }
   .input-group {
     display: flex;
-    align-items: center;
+    gap: 0.5rem;
+    flex: 1 1 auto;
+  }
+  .input-group input {
+    width: 80px;
+    padding: 0.2rem 0.4rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+  }
+  .input-group input:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  body.dark .input-group input {
+    background: #222;
+    color: #eee;
+    border-color: #555;
+  }
+  body.dark .input-group input:focus {
+    border-color: #3399ff;
   }
 
-  .grocery-item > span {
-    flex: 1;
-    font-weight: 700;
-    font-size: 16px;
-    user-select: none;
+  /* Scrollbars */
+  section::-webkit-scrollbar {
+    width: 8px;
+  }
+  section::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  section::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+  }
+  body.dark section::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
   }
 
-  /* Responsive styles */
-  @media (max-width: 600px) {
-    #container {
-      padding: 20px 15px 30px;
-    }
-    .item, .grocery-item {
+  /* Share Buttons */
+  .share-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .share-buttons button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s;
+    font-size: 1.6rem;
+  }
+  .share-buttons button:hover {
+    transform: scale(1.3);
+  }
+  /* Brand colors for share icons */
+  .share-whatsapp { color: #25D366; }
+  .share-facebook { color: #1877F2; }
+  .share-twitter { color: #1DA1F2; }
+  .share-email { color: #D44638; }
+
+  /* Responsive layout */
+  @media (max-width: 800px) {
+    main {
       flex-direction: column;
-      align-items: flex-start;
-      padding: 14px 16px;
     }
-    button {
-      width: 100%;
-      margin-top: 10px;
-      font-size: 16px;
+    .input-group input {
+      width: 60px;
+      font-size: 0.9rem;
     }
-    .grocery-item > span {
-      margin-bottom: 10px;
-      font-size: 15px;
-      text-align: left;
-      width: 100%;
-    }
-    .input-group {
-      width: 100%;
-      justify-content: flex-start;
-      gap: 15px;
-      margin-bottom: 8px;
+    li.grocery-item span {
+      flex: 1 1 auto;
     }
   }
 </style>
-<!-- FontAwesome for icons -->
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
 </head>
 <body>
-  <div id="container">
-    <h2>Välj varor att lägga till</h2>
-    <ul id="items" class="item-list"></ul>
+<div class="container">
+  <header>
+    <h1>Min inköpslista</h1>
+    <button id="darkModeToggle" aria-pressed="false" aria-label="Toggle mörkt läge">Mörkt läge</button>
+  </header>
 
-    <h2>Din inköpslista</h2>
-    <ul id="groceryList" class="grocery-list"></ul>
+  <main>
+    <section aria-label="Tillgängliga produkter">
+      <h2>Välj produkter</h2>
+      <ul id="items" role="list"></ul>
+    </section>
 
-    <div id="shareButtons" aria-label="Dela inköpslista">
-      <button class="share-btn whatsapp" title="Dela på WhatsApp" aria-label="Dela på WhatsApp">
-        <i class="fab fa-whatsapp"></i>
-      </button>
-      <button class="share-btn facebook" title="Dela på Facebook" aria-label="Dela på Facebook">
-        <i class="fab fa-facebook-f"></i>
-      </button>
-      <button class="share-btn email" title="Dela via Email" aria-label="Dela via Email">
-        <i class="fas fa-envelope"></i>
-      </button>
-      <button class="share-btn twitter" title="Dela på Twitter" aria-label="Dela på Twitter">
-        <i class="fab fa-twitter"></i>
-      </button>
-    </div>
-  </div>
+    <section aria-label="Din inköpslista">
+      <h2>Din lista</h2>
+      <ul id="groceryList" role="list"></ul>
+
+      <div class="share-buttons" aria-label="Dela din inköpslista">
+        <button class="share-whatsapp" aria-label="Dela via WhatsApp" title="WhatsApp">📱</button>
+        <button class="share-facebook" aria-label="Dela via Facebook" title="Facebook">📘</button>
+        <button class="share-twitter" aria-label="Dela via Twitter" title="Twitter">🐦</button>
+        <button class="share-email" aria-label="Dela via E-post" title="E-post">✉️</button>
+      </div>
+    </section>
+  </main>
+</div>
 
 <script>
-  // Same allowed items as before
+  // Dark mode toggle
+  const darkToggleBtn = document.getElementById('darkModeToggle');
+  darkToggleBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    darkToggleBtn.setAttribute('aria-pressed', isDark);
+    darkToggleBtn.textContent = isDark ? 'Ljust läge' : 'Mörkt läge';
+  });
+
+  // Allowed items list (full text for clarity)
   const allowedItemsRaw = [
     "1 påse napolitana salads mix",
     "1 kg tomat",
@@ -246,30 +292,30 @@
     "1 kg lime",
     "1 ask basilika",
     "1 knippe färsk mynta",
-    "1 liter lemonad",
-    "1 påse bladspenat",
-    "1 paket fetaost",
-    "1 påse vitlök",
+    "1 kg apelsin",
+    "1 ask salami Milano",
+    "1 burk stenbitsrom",
+    "1 hink kokta ägg skalade",
+    "1 påse jordnötter saltade",
+    "1 påse valnötskärnor",
+    "1 påse vitlökskrutonger",
+    "1 kartong grillad kycklingbröst fryst",
+    "1 knippe dill",
+    "1 kg tvättad kul potatis",
+    "1 roman huvuden",
+    "1 st godmorgon apelsinjuice",
+    "1 st godmorgon äpple juice",
+    "1 flak Sprite i burk",
+    "1 kartong mozzarella bollar",
+    "1 ask Prochutto crudo",
+    "1 kartong fryst lingon",
+    "1 crisp sallad"
   ];
-
-  // Process allowed items to get item names (removing initial quantity)
-  const allowedItems = allowedItemsRaw.map(item => {
-    // Remove leading number + unit (e.g. "1 kg ", "1 st ", "1 påse ")
-    return item.replace(/^\d+\s*(kg|st|liter|flak|påse|dunk|hink|flak|spray|ask|knippe|paket|st|/gi, '').trim()
-      .replace(/^\d+\/\d+\s*/, '') // for fractions
-      .replace(/^\d+/, '') // any leftover digits
-      .trim();
-  });
-
-  // For simplicity, let's just remove the initial number and unit to get the item name
-  // We'll store the full original item for display on add.
-
-  // But since we want quantity & unit editable, let's allow any item from allowedItemsRaw as selectable
 
   const itemsUl = document.getElementById('items');
   const groceryListUl = document.getElementById('groceryList');
 
-  // Populate selectable items
+  // Populate selectable items list
   allowedItemsRaw.forEach(fullItem => {
     const li = document.createElement('li');
     li.className = 'item';
@@ -286,46 +332,26 @@
     itemsUl.appendChild(li);
   });
 
-  // Grocery list data structure to hold current items
   const groceryItems = [];
 
   function addGroceryItem(fullItemText) {
-    // Check if item already exists by name ignoring quantity/unit (basic approach)
-    // We'll consider the item name after first space (remove quantity)
-    // Extract name ignoring quantity/unit prefix (simple: remove first word(s))
-    // Here just remove the initial count/unit - let's split by space and remove first 1 or 2 words depending on pattern
+    if (groceryItems.some(i => i.fullItemText === fullItemText)) return;
 
-    // For simplicity, let's just add a unique id to each added item
-    const id = Date.now() + Math.random().toString(36).substring(2, 7);
-
-    // Extract quantity/unit and item name for editing:
-    // We try to split the original item string by space, first token is quantity (or fraction), second token could be unit, rest is name.
+    // Parse quantity and unit
     let quantity = '';
     let unit = '';
-    let name = '';
+    let name = fullItemText;
 
-    const parts = fullItemText.split(' ');
-    if (parts.length > 1) {
-      if (/^\d+\/\d+$/.test(parts[0])) {
-        quantity = parts[0];
-        unit = parts[1];
-        name = parts.slice(2).join(' ');
-      } else if (/^\d+/.test(parts[0])) {
-        quantity = parts[0];
-        unit = parts[1];
-        name = parts.slice(2).join(' ');
-      } else {
-        quantity = '';
-        unit = '';
-        name = fullItemText;
-      }
-    } else {
-      quantity = '';
-      unit = '';
-      name = fullItemText;
+    const regex = /^(\d+\/?\d*)\s*(kg|st|liter|flak|påse|dunk|hink|spray|ask|knippe|kartong|burk|spray|gram)?\s*(.*)$/i;
+    const match = fullItemText.match(regex);
+    if (match) {
+      quantity = match[1] || '';
+      unit = match[2] || '';
+      name = match[3] || fullItemText;
     }
 
-    groceryItems.push({ id, quantity, unit, name });
+    const id = Date.now() + Math.random().toString(36).slice(2, 7);
+    groceryItems.push({ id, quantity, unit, name, fullItemText });
     renderGroceryList();
   }
 
@@ -340,7 +366,6 @@
       nameSpan.title = 'Produktnamn';
       li.appendChild(nameSpan);
 
-      // Quantity input
       const qtyInput = document.createElement('input');
       qtyInput.type = 'text';
       qtyInput.value = item.quantity;
@@ -350,7 +375,6 @@
         item.quantity = e.target.value;
       });
 
-      // Unit input
       const unitInput = document.createElement('input');
       unitInput.type = 'text';
       unitInput.value = item.unit;
@@ -360,14 +384,12 @@
         item.unit = e.target.value;
       });
 
-      // Group qty & unit inputs
       const inputGroup = document.createElement('div');
       inputGroup.className = 'input-group';
       inputGroup.appendChild(qtyInput);
       inputGroup.appendChild(unitInput);
       li.appendChild(inputGroup);
 
-      // Remove button
       const removeBtn = document.createElement('button');
       removeBtn.textContent = 'Ta bort';
       removeBtn.title = 'Ta bort från listan';
@@ -385,45 +407,44 @@
     });
   }
 
-  // Share buttons logic
+  // Share buttons functionality
+  const shareButtons = {
+    whatsapp: document.querySelector('.share-whatsapp'),
+    facebook: document.querySelector('.share-facebook'),
+    twitter: document.querySelector('.share-twitter'),
+    email: document.querySelector('.share-email')
+  };
 
   function getGroceryText() {
-    if (groceryItems.length === 0) return "Inköpslistan är tom.";
-    return groceryItems.map(item => {
-      const qtyPart = item.quantity ? item.quantity + ' ' : '';
-      const unitPart = item.unit ? item.unit + ' ' : '';
-      return `${qtyPart}${unitPart}${item.name}`;
-    }).join('\n');
+    if (groceryItems.length === 0) return "Min inköpslista är tom.";
+    return groceryItems.map(i => `${i.quantity} ${i.unit} ${i.name}`).join('\n');
   }
 
-  const shareButtons = document.querySelectorAll('#shareButtons button');
+  shareButtons.whatsapp.addEventListener('click', () => {
+    const text = encodeURIComponent(getGroceryText());
+    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+  });
 
-  shareButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const text = encodeURIComponent(getGroceryText());
-      let url = '';
+  shareButtons.facebook.addEventListener('click', () => {
+    const text = encodeURIComponent(getGroceryText());
+    const url = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent('https://example.com') + '&quote=' + text;
+    window.open(url, '_blank');
+  });
 
-      if (btn.classList.contains('whatsapp')) {
-        url = `https://wa.me/?text=${text}`;
-      } else if (btn.classList.contains('facebook')) {
-        // Facebook sharing with text is tricky, usually uses URL; fallback to sharing text on own page
-        alert('Facebook sharing supports URLs only. Copy your list manually!');
-        return;
-      } else if (btn.classList.contains('email')) {
-        url = `mailto:?subject=Min inköpslista&body=${text}`;
-      } else if (btn.classList.contains('twitter')) {
-        url = `https://twitter.com/intent/tweet?text=${text}`;
-      }
+  shareButtons.twitter.addEventListener('click', () => {
+    const text = encodeURIComponent(getGroceryText());
+    const url = `https://twitter.com/intent/tweet?text=${text}`;
+    window.open(url, '_blank');
+  });
 
-      if (url) {
-        window.open(url, '_blank');
-      }
-    });
+  shareButtons.email.addEventListener('click', () => {
+    const subject = encodeURIComponent('Min inköpslista');
+    const body = encodeURIComponent(getGroceryText());
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
   });
 </script>
 </body>
 </html>
-
 
 
 
