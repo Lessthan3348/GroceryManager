@@ -1,465 +1,208 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grocery List / Inköpslista</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping List</title>
+    <style>
+        :root {
+            --light-bg: #ffffff;
+            --light-text: #000000;
+            --dark-bg: #181818;
+            --dark-text: #ffffff;
+            --primary-color: #6200ea;
+            --secondary-color: #03dac6;
+        }
 
-  body {
-    margin: 0; padding: 0;
-    font-family: 'Montserrat', sans-serif;
-    background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
-    background-size: cover;
-    color: #222;
-    transition: background-color 0.5s, color 0.5s;
-  }
-  body.dark {
-    background: #121212;
-    color: #eee;
-  }
-  .container {
-    max-width: 1000px;
-    margin: 1rem auto;
-    background: rgba(255 255 255 / 0.85);
-    padding: 1rem 2rem 3rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgb(0 0 0 / 0.3);
-    transition: background 0.5s, color 0.5s;
-  }
-  body.dark .container {
-    background: rgba(0 0 0 / 0.85);
-    color: #eee;
-  }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--light-text);
+            transition: background-color 0.3s, color 0.3s;
+        }
 
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  header h1 {
-    margin: 0;
-    font-weight: 700;
-    font-size: 2rem;
-    flex: 1 1 auto;
-  }
-  #buttonGroup {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  button {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    font-weight: 600;
-    border-radius: 25px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgb(0 123 255 / 0.5);
-    transition: background-color 0.3s, transform 0.3s;
-  }
-  button:hover {
-    background: #0056b3;
-    transform: scale(1.1);
-  }
+        .dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
 
-  main {
-    display: flex;
-    gap: 2rem;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-  }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: var(--light-bg);
+        }
 
-  section {
-    flex: 1 1 400px;
-    min-width: 280px;
-    max-height: 600px;
-    overflow-y: auto;
-    background: rgba(255 255 255 / 0.95);
-    border-radius: 10px;
-    padding: 1rem;
-    box-shadow: 0 5px 15px rgb(0 0 0 / 0.1);
-    transition: background 0.5s;
-  }
-  body.dark section {
-    background: rgba(20 20 20 / 0.95);
-  }
+        .dark-mode .container {
+            background-color: var(--dark-bg);
+        }
 
-  h2 {
-    margin-top: 0;
-    text-align: center;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-  }
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+        }
 
-  ul {
-    list-style: none;
-    margin: 0; padding: 0;
-  }
-  li.item, li.grocery-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.4rem 0.6rem;
-    border-bottom: 1px solid #ddd;
-    transition: background-color 0.3s;
-  }
-  body.dark li.item, body.dark li.grocery-item {
-    border-color: #444;
-  }
-  li.item:hover {
-    background: #e7f1ff;
-  }
-  body.dark li.item:hover {
-    background: #333a55;
-  }
+        .dark-mode h1 {
+            color: var(--secondary-color);
+        }
 
-  li.item button,
-  li.grocery-item button {
-    background: #28a745;
-    border: none;
-    color: white;
-    padding: 0.3rem 0.7rem;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 4px 6px rgb(40 167 69 / 0.4);
-    transition: background-color 0.3s, transform 0.3s;
-  }
-  li.item button:hover,
-  li.grocery-item button:hover {
-    background: #19692c;
-    transform: scale(1.1);
-  }
-  body.dark li.item button,
-  body.dark li.grocery-item button {
-    background: #66bb6a;
-    box-shadow: 0 4px 6px rgb(102 187 106 / 0.7);
-  }
-  body.dark li.item button:hover,
-  body.dark li.grocery-item button:hover {
-    background: #2e7d32;
-  }
+        .form {
+            display: flex;
+            gap: 10px;
+        }
 
-  li.grocery-item {
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  li.grocery-item span {
-    flex: 1 1 100%;
-    font-weight: 600;
-  }
-  .input-group {
-    display: flex;
-    gap: 0.5rem;
-    flex: 1 1 auto;
-  }
-  .input-group input {
-    width: 80px;
-    padding: 0.2rem 0.4rem;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    transition: border-color 0.3s;
-  }
-  .input-group input:focus {
-    outline: none;
-    border-color: #007bff;
-  }
-  body.dark .input-group input {
-    background: #222;
-    color: #eee;
-    border-color: #555;
-  }
-  body.dark .input-group input:focus {
-    border-color: #3399ff;
-  }
+        .form input[type="text"],
+        .form input[type="number"],
+        .form select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
 
-  /* Scrollbars */
-  section::-webkit-scrollbar {
-    width: 8px;
-  }
-  section::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  section::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.2);
-    border-radius: 4px;
-  }
-  body.dark section::-webkit-scrollbar-thumb {
-    background: rgba(255,255,255,0.3);
-  }
+        .form button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-  /* Share Buttons with SVG icons */
-  .share-buttons {
-    display: flex;
-    justify-content: center;
-    margin-top: 1rem;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
-  .share-buttons button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.3s;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .share-buttons button:hover {
-    transform: scale(1.3);
-  }
+        .form button:hover {
+            background-color: var(--secondary-color);
+        }
 
-  /* Color fills for each brand */
-  .share-whatsapp svg path {
-    fill: #25D366;
-  }
-  .share-facebook svg path {
-    fill: #1877F2;
-  }
-  .share-twitter svg path {
-    fill: #1DA1F2;
-  }
-  .share-email svg path {
-    fill: #D44638;
-  }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
 
-  /* Responsive layout */
-  @media (max-width: 800px) {
-    main {
-      flex-direction: column;
-    }
-    .input-group input {
-      width: 60px;
-      font-size: 0.9rem;
-    }
-    li.grocery-item span {
-      flex: 1 1 auto;
-    }
-    header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
-    }
-    #buttonGroup {
-      width: 100%;
-      justify-content: flex-start;
-    }
-  }
-</style>
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .dark-mode li {
+            border-color: #444;
+        }
+
+        .share {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .share button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .share button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .toggle {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .toggle button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary-color);
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle button:hover {
+            background-color: var(--secondary-color);
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1 id="pageTitle">Min inköpslista</h1>
-    <div id="buttonGroup">
-      <button id="langToggle" aria-label="Byt språk" title="Byt språk">EN</button>
-      <button id="darkModeToggle" aria-pressed="false" aria-label="Toggle mörkt läge">Mörkt läge</button>
+    <div class="container">
+        <h1>Shopping List</h1>
+        <div class="form">
+            <input type="text" id="item" placeholder="Item name">
+            <input type="number" id="quantity" placeholder="Quantity">
+            <select id="unit">
+                <option value="kg">kg</option>
+                <option value="liters">liters</option>
+                <option value="pcs">pcs</option>
+            </select>
+            <button onclick="addItem()">Add</button>
+        </div>
+        <ul id="list"></ul>
+        <div class="share">
+            <button onclick="shareList()">Share</button>
+        </div>
+        <div class="toggle">
+            <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+        </div>
     </div>
-  </header>
 
-  <main>
-    <section aria-label="Tillgängliga produkter">
-      <h2 id="chooseTitle">Välj produkter</h2>
-      <ul id="items" role="list"></ul>
-    </section>
+    <script>
+        let isDarkMode = false;
 
-    <section aria-label="Din inköpslista">
-      <h2 id="listTitle">Din lista</h2>
-      <ul id="groceryList" role="list"></ul>
+        function addItem() {
+            const itemInput = document.getElementById('item');
+            const quantityInput = document.getElementById('quantity');
+            const unitSelect = document.getElementById('unit');
 
-      <div class="share-buttons" aria-label="Dela din inköpslista">
-        <button class="share-whatsapp" aria-label="Dela via WhatsApp" title="WhatsApp" tabindex="0" role="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path d="M20.52 3.478A11.835 11.835 0 0012.002.02C6.157.02 1.5 4.68 1.5 10.528c0 1.836.507 3.632 1.464 5.226L.5 23.5l7.958-2.056a10.525 10.525 0 004.538 1.01c5.845 0 10.502-4.66 10.502-10.507a10.43 10.43 0 00-2.004-6.47zM12 21.94a9.404 9.404 0 01-4.804-1.406l-.345-.204-4.7 1.215 1.253-4.591-.227-.377a9.448 9.448 0 0115.244-11.03 9.37 9.37 0 012.27 6.22c0 5.18-4.21 9.39-9.491 9.39zM16.753 14.04c-.267-.134-1.575-.776-1.82-.865-.245-.09-.422-.134-.6.134-.18.267-.694.864-.852 1.04-.156.18-.312.202-.58.067-.266-.134-1.124-.413-2.145-1.328-.793-.707-1.33-1.58-1.486-1.847-.156-.267-.017-.412.117-.543.12-.119.267-.312.4-.468.134-.156.18-.267.267-.445.09-.18.045-.335-.022-.47-.067-.135-.6-1.445-.82-1.976-.217-.518-.44-.447-.6-.456-.156-.009-.335-.01-.514-.01-.18 0-.47.067-.716.335-.245.267-.94.92-.94 2.24 0 1.317.963 2.59 1.1 2.773.134.18 1.9 2.9 4.6 4.067.643.277 1.145.442 1.536.566.645.204 1.234.175 1.7.107.518-.076 1.575-.643 1.8-1.264.225-.62.225-1.15.156-1.264-.067-.115-.243-.18-.51-.313z"/></svg>
-        </button>
-        <button class="share-facebook" aria-label="Dela via Facebook" title="Facebook" tabindex="0" role="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path d="M22.675 0h-21.35C.597 0 0 .598 0 1.333v21.333C0 23.4.598 24 1.325 24H12.82v-9.294H9.692v-3.62h3.126V8.413c0-3.1 1.894-4.788 4.66-4.788 1.325 0 2.466.1 2.797.142v3.245l-1.918.001c-1.504 0-1.797.715-1.797 1.764v2.313h3.59l-.467 3.62h-3.122V24h6.116c.73 0 1.324-.6 1.324-1.334V1.333C24 .598 23.405 0 22.675 0z"/></svg>
-        </button>
-        <button class="share-twitter" aria-label="Dela via Twitter" title="Twitter" tabindex="0" role="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path d="M23.954 4.569a10.02 10.02 0 01-2.825.775 4.932 4.932 0 002.163-2.724 9.865 9.865 0 01-3.127 1.195 4.917 4.917 0 00-8.38 4.482A13.95 13.95 0 011.671 3.15 4.822 4.822 0 003.195 9.722a4.902 4.902 0 01-2.229-.616v.06a4.917 4.917 0 003.946 4.82 4.952 4.952 0 01-2.224.084 4.919 4.919 0 004.59 3.41A9.867 9.867 0 010 19.54a13.94 13.94 0 007.548 2.212c9.142 0 14.307-7.72 14.307-14.42 0-.22-.004-.433-.015-.644A10.025 10.025 0 0024 4.59z"/></svg>
-        </button>
-        <button class="share-email" aria-label="Dela via Email" title="Email" tabindex="0" role="button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.104.897 2 2 2h16c1.104 0 2-.896 2-2V6c0-1.103-.896-2-2-2zM4 6h16l-8 5-8-5zm0 12V8l7.455 4.664a.998.998 0 001.09 0L20 8v10H4z"/></svg>
-        </button>
-      </div>
-    </section>
-  </main>
-</div>
+            const itemName = itemInput.value.trim();
+            const quantity = quantityInput.value.trim();
+            const unit = unitSelect.value;
 
-<script>
-  const languageData = {
-    sv: {
-      pageTitle: "Min inköpslista",
-      chooseTitle: "Välj produkter",
-      listTitle: "Din lista",
-      addBtn: "Lägg till",
-      removeBtn: "Ta bort",
-      darkModeOn: "Mörkt läge",
-      darkModeOff: "Ljust läge",
-      langToggle: "EN",
-      shareWhatsapp: "Dela via WhatsApp",
-      shareFacebook: "Dela via Facebook",
-      shareTwitter: "Dela via Twitter",
-      shareEmail: "Dela via Email",
-    },
-    en: {
-      pageTitle: "My Grocery List",
-      chooseTitle: "Choose Products",
-      listTitle: "Your List",
-      addBtn: "Add",
-      removeBtn: "Remove",
-      darkModeOn: "Dark Mode",
-      darkModeOff: "Light Mode",
-      langToggle: "SV",
-      shareWhatsapp: "Share on WhatsApp",
-      shareFacebook: "Share on Facebook",
-      shareTwitter: "Share on Twitter",
-      shareEmail: "Share via Email",
-    }
-  };
+            if (itemName && quantity) {
+                const list = document.getElementById('list');
+                const li = document.createElement('li');
+                li.textContent = `${itemName} - ${quantity} ${unit}`;
 
-  let currentLang = 'sv';
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.style.marginLeft = '10px';
+                removeButton.onclick = () => list.removeChild(li);
 
-  const items = [
-    { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
-    { name: "Tomat", quantity: 1, unit: "kg" },
-    { name: "Championer", quantity: 1, unit: "kg" },
-    { name: "Rödlök", quantity: 1, unit: "kg" },
-    { name: "Margarin flytande rama", quantity: 1, unit: "st" },
-    { name: "Olivolja extra virgin", quantity: 5, unit: "L" },
-    { name: "Gurka ofilmad", quantity: 1, unit: "kg" },
-    { name: "Citron", quantity: 1, unit: "kg" },
-    { name: "Handskalade räkor", quantity: 1, unit: "hink" },
-    { name: "Granny Smith äpplen gröna", quantity: 0.5, unit: "kg" },
-    { name: "Ramlösa naturell i burk", quantity: 1, unit: "flak" },
-    { name: "Coca Cola i burk", quantity: 1, unit: "flak" },
-    { name: "Coca Cola Zero i burk", quantity: 1, unit: "flak" },
-    { name: "Standard mjölk", quantity: 1, unit: "L" },
-    { name: "Spray grädde", quantity: 1, unit: "st" },
-    { name: "Rama grädde", quantity: 1, unit: "L" },
-    { name: "Riven mozzarella ost", quantity: 1, unit: "påse" },
-    { name: "Riven grano padano", quantity: 1, unit: "påse" },
-    { name: "Smör red label Arla", quantity: 500, unit: "g" },
-    { name: "Bakad potatis", quantity: 15, unit: "st" },
-    { name: "Spaghetti", quantity: 5, unit: "kg" },
-    { name: "Chèvre rulle", quantity: 1, unit: "st" },
-    { name: "Mospotatis chefs cut", quantity: 1, unit: "påse" },
-    { name: "Ruccola", quantity: 1, unit: "ask" },
-    { name: "Lime", quantity: 1, unit: "kg" },
-    { name: "Basilika", quantity: 1, unit: "ask" },
-    { name: "Färsk mynta", quantity: 1, unit: "knippe" },
-    { name: "Apelsin", quantity: 1, unit: "kg" },
-    { name: "Salami Milano", quantity: 1, unit: "ask" },
-    { name: "Stenbitsrom", quantity: 1, unit: "burk" },
-    { name: "Kokta ägg skalade", quantity: 1, unit: "hink" },
-    { name: "Jordnötter saltade", quantity: 1, unit: "påse" },
-    { name: "Valnötskärnor", quantity: 1, unit: "påse" },
-    { name: "Vitlökskrutonger", quantity: 1, unit: "påse" },
-    { name: "Grillad kycklingbröst fryst", quantity: 1, unit: "kartong" },
-    { name: "Dill", quantity: 1, unit: "knippe" },
-    { name: "Tvättad kul potatis", quantity: 1, unit: "kg" },
-    { name: "Roman huvuden", quantity: 1, unit: "st" },
-    { name: "Godmorgon apelsinjuice", quantity: 1, unit: "st" },
-    { name: "Godmorgon äpple juice", quantity: 1, unit: "st" },
-    { name: "Sprite i burk", quantity: 1, unit: "flak" },
-    { name: "Mozzarella bollar", quantity: 1, unit: "kartong" },
-    { name: "Prochutto crudo", quantity: 1, unit: "ask" },
-    { name: "Fryst lingon", quantity: 1, unit: "kartong" },
-    { name: "Crisp sallad", quantity: 1, unit: "st" },
-  ];
+                li.appendChild(removeButton);
+                list.appendChild(li);
 
-  const itemsContainer = document.getElementById('items');
-  const groceryList = document.getElementById('groceryList');
-  const pageTitle = document.getElementById('pageTitle');
-  const chooseTitle = document.getElementById('chooseTitle');
-  const listTitle = document.getElementById('listTitle');
-  const langToggle = document.getElementById('langToggle');
-  const darkModeToggle = document.getElementById('darkModeToggle');
-  const shareButtons = document.querySelectorAll('.share-buttons button');
+                itemInput.value = '';
+                quantityInput.value = '';
+                unitSelect.selectedIndex = 0;
+            }
+        }
 
-  let groceryItems = [];
+        function shareList() {
+            const items = Array.from(document.querySelectorAll('#list li')).map(li => li.textContent.replace('Remove', '').trim());
+            if (items.length) {
+                navigator.clipboard.writeText(items.join('\n')).then(() => {
+                    alert('List copied to clipboard!');
+                });
+            } else {
+                alert('No items to share.');
+            }
+        }
 
-  function renderItems() {
-    itemsContainer.innerHTML = '';
-    items.forEach((item, index) => {
-      const itemDiv = document.createElement('div');
-      itemDiv.classList.add('item');
-      itemDiv.innerHTML = `
-        <span>${item.name} (${item.quantity} ${item.unit})</span>
-        <button aria-label="${languageData[currentLang].addBtn} ${item.name}" data-index="${index}">${languageData[currentLang].addBtn}</button>
-      `;
-      itemsContainer.appendChild(itemDiv);
-    });
-  }
-
-  function renderList() {
-    groceryList.innerHTML = '';
-    groceryItems.forEach((item, index) => {
-      const listItem = document.createElement('li');
-      listItem.textContent = `${item.name} (${item.quantity} ${item.unit})`;
-      const removeBtn = document.createElement('button');
-      removeBtn.textContent = languageData[currentLang].removeBtn;
-      removeBtn.setAttribute('aria-label', `${languageData[currentLang].removeBtn} ${item.name}`);
-      removeBtn.addEventListener('click', () => {
-        groceryItems.splice(index, 1);
-        renderList();
-      });
-      listItem.appendChild(removeBtn);
-      groceryList.appendChild(listItem);
-    });
-  }
-
-  itemsContainer.addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON') {
-      const index = e.target.getAttribute('data-index');
-      groceryItems.push(items[index]);
-      renderList();
-    }
-  });
-
-  langToggle.addEventListener('click', () => {
-    currentLang = currentLang === 'sv' ? 'en' : 'sv';
-    updateLanguage();
-  });
-
-  function updateLanguage() {
-    pageTitle.textContent = languageData[currentLang].pageTitle;
-    chooseTitle.textContent = languageData[currentLang].chooseTitle;
-    listTitle.textContent = languageData[currentLang].listTitle;
-    langToggle.textContent = languageData[currentLang].langToggle;
-    darkModeToggle.textContent = languageData[currentLang] === 'sv' ? languageData[currentLang].darkModeOn : languageData[currentLang].darkModeOff;
-    shareButtons.forEach(button => {
-      if (button.classList.contains('share-whatsapp')) button.setAttribute('aria-label', languageData[currentLang].shareWhatsapp);
-      else if (button.classList.contains('share-facebook')) button.setAttribute('aria-label', languageData[currentLang].shareFacebook);
-      else if (button.classList.contains('share-twitter')) button.setAttribute('aria-label', languageData[currentLang].shareTwitter);
-      else if (button.classList.contains('share-email')) button.setAttribute('aria-label', languageData[currentLang].shareEmail);
-      // update titles
-      if (button.classList.contains('share-whatsapp')) button.title = languageData[currentLang].shareWhatsapp;
-      else if (button.classList.contains('share-facebook')) button.title = languageData[currentLang].shareFacebook;
-      else if (button.classList.contains('share-twitter')) button.title = languageData[currentLang].shareTwitter;
-      else if (button.classList.contains('share-email')) button.title = languageData[currentLang].shareEmail;
-    });
-    renderItems();
-    renderList();
-  }
-
-  darkModeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? languageData[currentLang].darkModeOn : languageData[currentLang].darkModeOff;
-  });
-
-  updateLanguage();
-</script>
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+        }
+    </script>
 </body>
 </html>
 
