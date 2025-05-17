@@ -131,6 +131,70 @@
   <ul id="addedList"></ul>
 
   <script>
+// WhatsApp Sharing and Link Generation
+const shareWhatsAppButton = document.createElement("button");
+shareWhatsAppButton.textContent = "Share on WhatsApp";
+document.body.appendChild(shareWhatsAppButton);
+
+const generateLinkButton = document.createElement("button");
+generateLinkButton.textContent = "Generate Sharable Link";
+document.body.appendChild(generateLinkButton);
+
+const sharableLinkInput = document.createElement("textarea");
+sharableLinkInput.setAttribute("readonly", true);
+sharableLinkInput.setAttribute("rows", "2");
+sharableLinkInput.style.width = "100%";
+sharableLinkInput.style.marginTop = "10px";
+document.body.appendChild(sharableLinkInput);
+
+// Function to get the added list as text
+function getAddedListText() {
+  return addedItems
+    .map((item) => `${item.quantity} ${item.unit} ${item.name}`)
+    .join("\n");
+}
+
+// WhatsApp Sharing
+shareWhatsAppButton.addEventListener("click", () => {
+  const listText = getAddedListText();
+  if (!listText) {
+    alert("Your list is empty. Add some items first.");
+    return;
+  }
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
+    "Here's my grocery list:\n" + listText
+  )}`;
+  window.open(whatsappUrl, "_blank");
+});
+
+// Generate Sharable Link
+generateLinkButton.addEventListener("click", () => {
+  const listText = getAddedListText();
+  if (!listText) {
+    alert("Your list is empty. Add some items first.");
+    return;
+  }
+  const encodedList = encodeURIComponent(listText);
+  const link = `${window.location.origin}${window.location.pathname}?list=${encodedList}`;
+  sharableLinkInput.value = link;
+  alert("Sharable link generated! Copy it below.");
+});
+
+// Load List from Sharable Link
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has("list")) {
+  const listFromUrl = decodeURIComponent(urlParams.get("list"));
+  const listItems = listFromUrl.split("\n").map((line) => {
+    const [quantity, unit, ...nameParts] = line.split(" ");
+    const name = nameParts.join(" ");
+    return { name, quantity: parseFloat(quantity), unit };
+  });
+  addedItems = listItems;
+  saveToStorage("groceryList", addedItems);
+  renderAddedList();
+}
+
+    
    const items = [
   { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
   { name: "Tomat", quantity: 1, unit: "kg" },
