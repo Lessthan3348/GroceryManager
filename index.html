@@ -1,576 +1,524 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shopping List with Advanced Features</title>
-  <style>
-    :root {
-      --light-bg: #ffffff;
-      --light-text: #000000;
-      --dark-bg: #181818;
-      --dark-text: #ffffff;
-      --primary-color: #6200ea;
-      --secondary-color: #03dac6;
-      --btn-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-      --btn-shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.25);
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shopping List</title>
+<style>
+  :root {
+    --light-bg: #fff;
+    --light-text: #222;
+    --dark-bg: #181818;
+    --dark-text: #eee;
+    --primary-color: #6200ea;
+    --secondary-color: #03dac6;
+    --button-bg: #6200ea;
+    --button-hover-bg: #3700b3;
+    --button-shadow: rgba(98, 0, 234, 0.5);
+  }
+  body {
+    margin: 0; font-family: Arial, sans-serif;
+    background-color: var(--light-bg);
+    color: var(--light-text);
+    transition: background-color 0.3s, color 0.3s;
+  }
+  .dark-mode {
+    background-color: var(--dark-bg);
+    color: var(--dark-text);
+  }
+  .container {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    background-color: var(--light-bg);
+  }
+  .dark-mode .container {
+    background-color: var(--dark-bg);
+    box-shadow: 0 6px 15px rgba(255,255,255,0.1);
+  }
+  h1 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+  }
+  .dark-mode h1 {
+    color: var(--secondary-color);
+  }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: var(--light-bg);
-      color: var(--light-text);
-      transition: background-color 0.3s, color 0.3s;
-      padding: 20px;
-    }
+  /* Form */
+  .form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+  }
+  .form input[type="text"],
+  .form input[type="number"],
+  .form select {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  }
+  #item {
+    flex: 2 1 300px;
+  }
+  #quantity {
+    width: 80px;
+  }
+  #unit {
+    width: 100px;
+  }
+  .form button {
+    background-color: var(--button-bg);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 15px var(--button-shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+    flex: 1 1 120px;
+  }
+  .form button:hover,
+  .form button:focus {
+    background-color: var(--button-hover-bg);
+    box-shadow: 0 8px 25px var(--button-shadow);
+  }
 
-    .dark-mode {
-      background-color: var(--dark-bg);
-      color: var(--dark-text);
-    }
+  /* List */
+  ul#list {
+    list-style: none;
+    padding: 0;
+    max-height: 380px;
+    overflow-y: auto;
+    border-top: 2px solid var(--primary-color);
+  }
+  ul#list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 10px;
+    border-bottom: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  .dark-mode ul#list li {
+    border-color: #444;
+  }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-      border-radius: 10px;
-      background-color: var(--light-bg);
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s;
-    }
+  /* List item details */
+  .list-item-details {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .list-item-details input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  .list-item-details select {
+    width: 80px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  .list-item-name {
+    flex: 1;
+    font-weight: 500;
+  }
+  /* Remove button */
+  .remove-btn {
+    background-color: #e53935;
+    border: none;
+    color: white;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(229, 57, 53, 0.5);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .remove-btn:hover {
+    background-color: #b71c1c;
+    box-shadow: 0 6px 20px rgba(183, 28, 28, 0.7);
+  }
 
-    .dark-mode .container {
-      background-color: var(--dark-bg);
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-    }
+  /* Share Buttons Container */
+  .share {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+  .share button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 6px 15px var(--button-shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  .share button:hover {
+    background-color: var(--button-hover-bg);
+    box-shadow: 0 8px 25px var(--button-shadow);
+  }
+  .share button svg {
+    width: 22px;
+    height: 22px;
+    fill: white;
+  }
 
-    h1 {
-      text-align: center;
-      color: var(--primary-color);
-      margin-bottom: 15px;
-    }
+  /* Dark mode toggle */
+  .toggle {
+    margin-top: 20px;
+    text-align: center;
+  }
+  .toggle button {
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 25px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 15px var(--button-shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  .toggle button:hover {
+    background-color: var(--button-hover-bg);
+    box-shadow: 0 8px 25px var(--button-shadow);
+  }
 
-    .dark-mode h1 {
-      color: var(--secondary-color);
-    }
-
-    .search-bar {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      margin-bottom: 15px;
-      transition: border-color 0.3s;
-    }
-
-    .search-bar:focus {
-      border-color: var(--primary-color);
-      outline: none;
-      box-shadow: var(--btn-shadow-hover);
-    }
-
-    .lists-wrapper {
-      display: flex;
-      gap: 30px;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-
-    .list-section {
-      flex: 1 1 45%;
-      min-width: 280px;
-    }
-
-    h2 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      color: var(--primary-color);
-    }
-
-    .dark-mode h2 {
-      color: var(--secondary-color);
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      max-height: 400px;
-      overflow-y: auto;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background-color: var(--light-bg);
-      transition: background-color 0.3s, border-color 0.3s;
-    }
-
-    .dark-mode ul {
-      background-color: var(--dark-bg);
-      border-color: #555;
-    }
-
-    li {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-bottom: 1px solid #eee;
-      transition: background-color 0.2s;
-    }
-
-    .dark-mode li {
-      border-color: #444;
-    }
-
-    li:hover {
-      background-color: var(--secondary-color);
-      color: var(--dark-bg);
-      cursor: pointer;
-    }
-
-    .item-name {
-      flex: 1;
-    }
-
-    button.add-btn,
-    button.remove-btn {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 5px;
-      background-color: var(--primary-color);
-      color: #fff;
-      cursor: pointer;
-      box-shadow: var(--btn-shadow);
-      transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
-    }
-
-    button.add-btn:hover,
-    button.remove-btn:hover {
-      background-color: var(--secondary-color);
-      box-shadow: var(--btn-shadow-hover);
-      transform: scale(1.05);
-    }
-
-    button.remove-btn {
-      background-color: #d9534f;
-    }
-
-    button.remove-btn:hover {
-      background-color: #c9302c;
-    }
-
-    .qty-input {
-      width: 50px;
-      margin: 0 8px;
-      padding: 4px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      text-align: center;
-      font-size: 14px;
-      transition: border-color 0.3s;
-    }
-
-    .qty-input:focus {
-      border-color: var(--primary-color);
-      outline: none;
-      box-shadow: var(--btn-shadow-hover);
-    }
-
-    select.unit-select {
-      margin-right: 8px;
-      padding: 4px 6px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-      cursor: pointer;
-      transition: border-color 0.3s;
-    }
-
-    select.unit-select:focus {
-      border-color: var(--primary-color);
-      outline: none;
-      box-shadow: var(--btn-shadow-hover);
-    }
-
-    /* Share buttons container */
-    .share-buttons {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    .share-btn {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 10px 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 16px;
-      color: #fff;
-      box-shadow: var(--btn-shadow);
-      transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
-      user-select: none;
-      text-decoration: none;
-    }
-
-    .share-btn svg {
-      width: 24px;
-      height: 24px;
-      fill: currentColor;
-    }
-
-    .share-btn:hover {
-      box-shadow: var(--btn-shadow-hover);
-      transform: scale(1.1);
-    }
-
-    .share-btn.whatsapp {
-      background-color: #25d366;
-    }
-
-    .share-btn.whatsapp:hover {
-      background-color: #1ebe5d;
-    }
-
-    .share-btn.facebook {
-      background-color: #3b5998;
-    }
-
-    .share-btn.facebook:hover {
-      background-color: #2d4373;
-    }
-
-    .share-btn.twitter {
-      background-color: #1da1f2;
-    }
-
-    .share-btn.twitter:hover {
-      background-color: #0d95e8;
-    }
-
-    .share-btn.copy {
-      background-color: #6c757d;
-      font-size: 18px;
-    }
-
-    .share-btn.copy:hover {
-      background-color: #565e64;
-    }
-
-    /* Dark mode adjustments for buttons */
-    .dark-mode .share-btn.whatsapp {
-      background-color: #1ebe5d;
-    }
-
-    .dark-mode .share-btn.facebook {
-      background-color: #2d4373;
-    }
-
-    .dark-mode .share-btn.twitter {
-      background-color: #0d95e8;
-    }
-
-    .dark-mode .share-btn.copy {
-      background-color: #565e64;
-    }
-
-    .toggle {
-      display: flex;
-      justify-content: center;
-      margin-top: 25px;
-    }
-
-    .toggle button {
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      background-color: var(--primary-color);
-      color: #fff;
-      font-weight: 700;
-      font-size: 16px;
-      cursor: pointer;
-      box-shadow: var(--btn-shadow);
-      transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
-      user-select: none;
-    }
-
-    .toggle button:hover {
-      background-color: var(--secondary-color);
-      box-shadow: var(--btn-shadow-hover);
-      transform: scale(1.05);
-    }
-  </style>
+  /* Autocomplete dropdown */
+  .autocomplete-items {
+    position: absolute;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 180px;
+    overflow-y: auto;
+    background-color: white;
+    z-index: 1000;
+    width: 300px;
+    border-radius: 0 0 8px 8px;
+  }
+  .dark-mode .autocomplete-items {
+    background-color: #222;
+    color: #eee;
+  }
+  .autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+  .autocomplete-item:hover {
+    background-color: var(--primary-color);
+    color: white;
+  }
+</style>
 </head>
 <body>
   <div class="container">
     <h1>Shopping List</h1>
-    <input
-      type="search"
-      id="search"
-      class="search-bar"
-      placeholder="Search items to add..."
-      aria-label="Search items to add"
-      autocomplete="off"
-      spellcheck="false"
-    />
-
-    <div class="lists-wrapper">
-      <section class="list-section" aria-label="Available items">
-        <h2>Available Items</h2>
-        <ul id="available-list"></ul>
-      </section>
-
-      <section class="list-section" aria-label="Your shopping list">
-        <h2>Your List</h2>
-        <ul id="shopping-list"></ul>
-      </section>
+    <div style="position: relative;" class="form">
+      <input
+        type="text"
+        id="item"
+        placeholder="Search or type item name"
+        autocomplete="off"
+      />
+      <input
+        type="number"
+        id="quantity"
+        min="0.01"
+        step="0.01"
+        placeholder="Quantity"
+        value="1"
+      />
+      <select id="unit">
+        <option value="st">st</option>
+        <option value="kg">kg</option>
+        <option value="liter">liter</option>
+        <option value="påse">påse</option>
+        <option value="dunk">dunk</option>
+        <option value="hink">hink</option>
+        <option value="flak">flak</option>
+        <option value="spray">spray</option>
+        <option value="ask">ask</option>
+        <option value="knippe">knippe</option>
+        <option value="burk">burk</option>
+        <option value="kartong">kartong</option>
+      </select>
+      <button onclick="addItem()">Add</button>
+      <div id="autocomplete-list" class="autocomplete-items"></div>
     </div>
+    <ul id="list"></ul>
 
-    <div class="share-buttons" role="group" aria-label="Share shopping list">
-      <button class="share-btn whatsapp" onclick="shareWhatsApp()" title="Share on WhatsApp" aria-label="Share on WhatsApp">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M20.52 3.48A11.93 11.93 0 0012 0C5.373 0 0 5.373 0 12c0 2.116.556 4.128 1.6 5.94L0 24l6.24-1.6A11.926 11.926 0 0012 24c6.627 0 12-5.373 12-12 0-3.192-1.243-6.213-3.48-8.52zm-8.28 16.56c-2.304 0-4.3-1.2-5.368-3.024l-.376-.624 3.28-1.616.264.4c.576.832 1.472 1.456 2.52 1.456 2.568 0 4.656-2.088 4.656-4.656 0-2.568-2.088-4.656-4.656-4.656-2.544 0-4.632 2.04-4.632 4.536 0 .736.2 1.432.56 2.04l-.656.72-3.016-1.48-.056-.024-.128-.08c-.376-.216-.776-.432-1.176-.632l-.176-.096c-.016-.016-.024-.032-.032-.04a7.406 7.406 0 01-1.2-2.152l-.04-.152c-.024-.128-.04-.256-.04-.392a6.735 6.735 0 0112.984-2.952c0 3.72-3.024 6.72-6.744 6.72z"></path>
-        </svg>
+    <div class="share">
+      <button id="whatsappShare" title="Share on WhatsApp">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5a10 10 0 1 0-11.5 17.7l-2.2 1.4 1.5-2.4A10 10 0 0 0 20.5 3.5zm-8.5 14a7.5 7.5 0 0 1-4-1.2l-.3-.2-2.4.7.7-2.4-.2-.3a7.5 7.5 0 1 1 6.2 3.4zM15 14.5c-.2 0-.5 0-.7-.2l-.5-.3c-.2-.1-.4-.2-.6-.3-.2 0-.5 0-.7.2s-.4.3-.5.5c-.1.1-.2.3-.2.5s.1.5.4.8c.4.4.7.6 1.4.8s1 .3 1.4.3.9-.1 1.2-.3 1.2-.8 1.2-1.6-.8-1.1-1-1.2c-.2 0-.5 0-.7.1z"/></svg>
         WhatsApp
       </button>
-      <button class="share-btn facebook" onclick="shareFacebook()" title="Share on Facebook" aria-label="Share on Facebook">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M22.675 0h-21.35C.597 0 0 .593 0 1.326v21.348C0 23.406.597 24 1.325 24H12.82v-9.294H9.692V11.01h3.128V8.41c0-3.1 1.892-4.788 4.657-4.788 1.324 0 2.463.1 2.796.144v3.24l-1.92.001c-1.504 0-1.796.715-1.796 1.763v2.31h3.587l-.467 3.696h-3.12V24h6.116C23.403 24 24 23.406 24 22.674V1.326C24 .593 23.403 0 22.675 0z"></path>
-        </svg>
+      <button id="facebookShare" title="Share on Facebook">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.7 0H1.3A1.3 1.3 0 0 0 0 1.3v21.4A1.3 1.3 0 0 0 1.3 24H12v-9.3H9.3v-3.6H12V8.4c0-2.7 1.6-4.2 4-4.2 1.1 0 2 0.1 2.3 0.1v2.7h-1.6c-1.2 0-1.5 0.6-1.5 1.5v1.9h3l-.4 3.6h-2.6V24h5.1A1.3 1.3 0 0 0 24 22.7V1.3A1.3 1.3 0 0 0 22.7 0z"/></svg>
         Facebook
       </button>
-      <button class="share-btn twitter" onclick="shareTwitter()" title="Share on Twitter" aria-label="Share on Twitter">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M23.954 4.569c-.885.39-1.83.654-2.825.775a4.932 4.932 0 002.163-2.724 9.865 9.865 0 01-3.127 1.195 4.917 4.917 0 00-8.379 4.482A13.94 13.94 0 011.671 3.149a4.917 4.917 0 001.523 6.556 4.897 4.897 0 01-2.224-.616v.062a4.917 4.917 0 003.946 4.817 4.902 4.902 0 01-2.217.085 4.917 4.917 0 004.588 3.417A9.867 9.867 0 010 19.54a13.918 13.918 0 007.548 2.212c9.056 0 14.01-7.496 14.01-13.986 0-.21 0-.423-.015-.633A9.936 9.936 0 0024 4.59z"></path>
-        </svg>
+      <button id="twitterShare" title="Share on Twitter">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.4 4.9c-.8.4-1.6.7-2.5.9a4.3 4.3 0 0 0 1.9-2.4c-.8.5-1.8.8-2.7 1a4.2 4.2 0 0 0-7.2 3.9 11.9 11.9 0 0 1-8.7-4.4 4.3 4.3 0 0 0 1.3 5.7c-.7 0-1.4-.2-2-.5a4.2 4.2 0 0 0 3.3 4.1 4.3 4.3 0 0 1-1.1.2c-.3 0-.6 0-.9-.1a4.2 4.2 0 0 0 4 3 8.5 8.5 0 0 1-5.3 1.8c-.3 0-.6 0-.9 0a11.9 11.9 0 0 0 6.5 1.9c7.8 0 12-6.5 12-12 0-.2 0-.4 0-.6a8.5 8.5 0 0 0 2.1-2.1z"/></svg>
         Twitter
-      </button>
-      <button class="share-btn copy" onclick="copyList()" title="Copy list to clipboard" aria-label="Copy list to clipboard">
-        📋 Copy
       </button>
     </div>
 
     <div class="toggle">
-      <button id="dark-mode-toggle" aria-pressed="false">Toggle Dark Mode</button>
+      <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
     </div>
   </div>
 
-  <script>
-    const availableList = document.getElementById('available-list');
-    const shoppingList = document.getElementById('shopping-list');
-    const searchInput = document.getElementById('search');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
+<script>
+  // Your full item list with quantity, unit, name
+  const availableItems = [
+    { qty: 1, unit: 'påse', name: 'napolitana salads mix' },
+    { qty: 1, unit: 'kg', name: 'tomat' },
+    { qty: 1, unit: 'kg', name: 'championer' },
+    { qty: 1, unit: 'kg', name: 'rödlök' },
+    { qty: 1, unit: 'st', name: 'margarin flytande rama' },
+    { qty: 1, unit: 'dunk', name: 'olivolja extra virgin 5 L' },
+    { qty: 1, unit: 'kg', name: 'gurka ofilmad' },
+    { qty: 1, unit: 'kg', name: 'citron' },
+    { qty: 1, unit: 'hink', name: 'handskalade räkor' },
+    { qty: 0.5, unit: 'kg', name: 'granny smith äpplen gröna' },
+    { qty: 1, unit: 'flak', name: 'Ramlösa naturell i burk' },
+    { qty: 1, unit: 'flak', name: 'coca cola i burk' },
+    { qty: 1, unit: 'flak', name: 'coca cola zero i burk' },
+    { qty: 1, unit: 'liter', name: 'standard mjölk' },
+    { qty: 1, unit: 'spray', name: 'grädde' },
+    { qty: 1, unit: 'liter', name: 'rama grädde' },
+    { qty: 1, unit: 'påse', name: 'riven mozzarella ost' },
+    { qty: 1, unit: 'påse', name: 'riven grano padano' },
+    { qty: 2, unit: 'st', name: '500 gram smör red label arla' },
+    { qty: 15, unit: 'st', name: 'bakad potatis' },
+    { qty: 5, unit: 'kg', name: 'spaghetti' },
+    { qty: 1, unit: 'st', name: 'chèvre rulle' },
+    { qty: 1, unit: 'påse', name: 'mospotatis chefs cut' },
+    { qty: 1, unit: 'ask', name: 'ruccola' },
+    { qty: 1, unit: 'kg', name: 'lime' },
+    { qty: 1, unit: 'ask', name: 'basilika' },
+    { qty: 1, unit: 'knippe', name: 'färsk mynta' },
+    { qty: 1, unit: 'kg', name: 'apelsin' },
+    { qty: 1, unit: 'ask', name: 'salami Milano' },
+    { qty: 1, unit: 'burk', name: 'stenbitsrom' },
+    { qty: 1, unit: 'hink', name: 'kokta ägg skalade' },
+    { qty: 1, unit: 'påse', name: 'jordnötter saltade' },
+    { qty: 1, unit: 'påse', name: 'valnötskärnor' },
+    { qty: 1, unit: 'påse', name: 'vitlökskrutonger' },
+    { qty: 1, unit: 'kartong', name: 'grillad kycklingbröst fryst' },
+    { qty: 1, unit: 'knippe', name: 'dill' },
+    { qty: 1, unit: 'kg', name: 'tvättad kul potatis' },
+    { qty: 1, unit: 'st', name: 'roman huvuden' },
+    { qty: 1, unit: 'st', name: 'godmorgon apelsinjuice' },
+    { qty: 1, unit: 'st', name: 'godmorgon äpple juice' },
+    { qty: 1, unit: 'flak', name: 'Sprite i burk' },
+    { qty: 1, unit: 'kartong', name: 'mozzarella bollar' },
+    { qty: 1, unit: 'ask', name: 'Prochutto crudo' },
+    { qty: 1, unit: 'kartong', name: 'fryst lingon' },
+    { qty: 1, unit: 'st', name: 'crisp sallad' }
+  ];
 
-    // Your original detailed items here as available items (name only)
-    const availableItems = [
-      "påse napolitana salads mix",
-      "kg tomat",
-      "kg championer",
-      "kg rödlök",
-      "st margarin flytande rama",
-      "dunk olivolja extra virgin 5 L",
-      "kg gurka ofilmad",
-      "kg citron",
-      "hink handskalade räkor",
-      "1/2 kg granny smith äpplen gröna",
-      "flak Ramlösa naturell i burk",
-      "flak coca cola i burk",
-      "flak coca cola zero i burk",
-      "liter standard mjölk",
-      "spray grädde",
-      "liter rama grädde",
-      "påse riven mozzarella ost",
-      "påse riven grano padano",
-      "st 500 gram smör red label arla",
-      "st bakad potatis",
-      "kg spaghetti",
-      "chèvre rulle",
-      "påse mospotatis chefs cut",
-      "ask ruccola",
-      "kg lime",
-      "ask basilika",
-      "knippe färsk mynta",
-      "kg apelsin",
-      "ask salami Milano",
-      "burk stenbitsrom",
-      "hink kokta ägg skalade",
-      "påse jordnötter saltade",
-      "påse valnötskärnor",
-      "påse vitlökskrutonger",
-      "kartong grillad kycklingbröst fryst",
-      "knippe dill",
-      "kg tvättad kul potatis",
-      "roman huvuden",
-      "st godmorgon apelsinjuice",
-      "st godmorgon äpple juice",
-      "flak Sprite i burk",
-      "kartong mozzarella bollar",
-      "ask Prochutto crudo",
-      "kartong fryst lingon",
-      "crisp sallad"
-    ];
+  // Current shopping list
+  let shoppingList = [];
 
-    // State: shopping list items as objects {name, qty, unit}
-    let shoppingListItems = [];
+  const itemInput = document.getElementById('item');
+  const quantityInput = document.getElementById('quantity');
+  const unitSelect = document.getElementById('unit');
+  const listElem = document.getElementById('list');
+  const autocompleteList = document.getElementById('autocomplete-list');
 
-    function renderAvailableList(filter = '') {
-      availableList.innerHTML = '';
-      const filterLower = filter.toLowerCase();
+  // Add item to shopping list
+  function addItem() {
+    const name = itemInput.value.trim();
+    const qty = parseFloat(quantityInput.value);
+    const unit = unitSelect.value;
 
-      availableItems.forEach(item => {
-        if (!item.toLowerCase().includes(filterLower)) return;
+    if (!name) {
+      alert('Please enter an item name.');
+      return;
+    }
+    if (isNaN(qty) || qty <= 0) {
+      alert('Please enter a valid quantity.');
+      return;
+    }
 
-        // Prevent adding duplicates
-        const alreadyInList = shoppingListItems.some(i => i.name === item);
+    // Check if item already in list (case-insensitive)
+    const existingIndex = shoppingList.findIndex(
+      item => item.name.toLowerCase() === name.toLowerCase() && item.unit === unit
+    );
 
-        const li = document.createElement('li');
-        li.classList.add('available-item');
+    if (existingIndex !== -1) {
+      // If exists, update quantity
+      shoppingList[existingIndex].qty += qty;
+    } else {
+      shoppingList.push({ name, qty, unit });
+    }
+    renderList();
+    clearInputs();
+  }
 
-        const span = document.createElement('span');
-        span.textContent = item;
-        span.className = 'item-name';
+  // Clear inputs after add
+  function clearInputs() {
+    itemInput.value = '';
+    quantityInput.value = '1';
+    unitSelect.value = 'st';
+    closeAutocomplete();
+  }
 
-        const btn = document.createElement('button');
-        btn.textContent = alreadyInList ? 'Added' : 'Add';
-        btn.disabled = alreadyInList;
-        btn.className = 'add-btn';
+  // Render shopping list on page
+  function renderList() {
+    listElem.innerHTML = '';
+    shoppingList.forEach((item, idx) => {
+      const li = document.createElement('li');
 
-        btn.addEventListener('click', () => {
-          addItemToList(item);
-          btn.textContent = 'Added';
-          btn.disabled = true;
-        });
+      const detailsDiv = document.createElement('div');
+      detailsDiv.classList.add('list-item-details');
 
-        li.appendChild(span);
-        li.appendChild(btn);
-        availableList.appendChild(li);
+      // Quantity input
+      const qtyInput = document.createElement('input');
+      qtyInput.type = 'number';
+      qtyInput.min = '0.01';
+      qtyInput.step = '0.01';
+      qtyInput.value = item.qty;
+      qtyInput.title = 'Change quantity';
+      qtyInput.addEventListener('change', () => {
+        const val = parseFloat(qtyInput.value);
+        if (isNaN(val) || val <= 0) {
+          qtyInput.value = item.qty; // revert
+          alert('Quantity must be positive number');
+          return;
+        }
+        item.qty = val;
       });
-    }
 
-    function addItemToList(name) {
-      const existing = shoppingListItems.find(i => i.name === name);
-      if (existing) {
-        existing.qty = Number(existing.qty) + 1;
-      } else {
-        shoppingListItems.push({ name, qty: 1, unit: 'pcs' });
-      }
-      renderShoppingList();
-      renderAvailableList(searchInput.value);
-    }
-
-    function removeItemFromList(name) {
-      shoppingListItems = shoppingListItems.filter(i => i.name !== name);
-      renderShoppingList();
-      renderAvailableList(searchInput.value);
-    }
-
-    function renderShoppingList() {
-      shoppingList.innerHTML = '';
-
-      shoppingListItems.forEach(item => {
-        const li = document.createElement('li');
-
-        const nameSpan = document.createElement('span');
-        nameSpan.textContent = item.name;
-        nameSpan.className = 'item-name';
-
-        const qtyInput = document.createElement('input');
-        qtyInput.type = 'number';
-        qtyInput.min = 1;
-        qtyInput.value = item.qty;
-        qtyInput.className = 'qty-input';
-        qtyInput.setAttribute('aria-label', `Quantity for ${item.name}`);
-        qtyInput.addEventListener('change', () => {
-          let val = parseInt(qtyInput.value);
-          if (isNaN(val) || val < 1) val = 1;
-          qtyInput.value = val;
-          item.qty = val;
-        });
-
-        const unitSelect = document.createElement('select');
-        unitSelect.className = 'unit-select';
-        unitSelect.setAttribute('aria-label', `Unit for ${item.name}`);
-
-        ['pcs', 'kg', 'liters', 'packs', 'bunch'].forEach(unitOption => {
-          const option = document.createElement('option');
-          option.value = unitOption;
-          option.textContent = unitOption;
-          if (unitOption === item.unit) option.selected = true;
-          unitSelect.appendChild(option);
-        });
-
-        unitSelect.addEventListener('change', () => {
-          item.unit = unitSelect.value;
-        });
-
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove';
-        removeBtn.className = 'remove-btn';
-        removeBtn.setAttribute('aria-label', `Remove ${item.name} from list`);
-        removeBtn.addEventListener('click', () => {
-          removeItemFromList(item.name);
-        });
-
-        li.appendChild(nameSpan);
-        li.appendChild(qtyInput);
-        li.appendChild(unitSelect);
-        li.appendChild(removeBtn);
-        shoppingList.appendChild(li);
+      // Unit select
+      const unitSelectElem = document.createElement('select');
+      ['st', 'kg', 'liter', 'påse', 'dunk', 'hink', 'flak', 'spray', 'ask', 'knippe', 'burk', 'kartong'].forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u;
+        opt.textContent = u;
+        if (u === item.unit) opt.selected = true;
+        unitSelectElem.appendChild(opt);
       });
-    }
+      unitSelectElem.title = 'Change unit';
+      unitSelectElem.addEventListener('change', () => {
+        item.unit = unitSelectElem.value;
+      });
 
-    searchInput.addEventListener('input', () => {
-      renderAvailableList(searchInput.value);
+      // Name span
+      const nameSpan = document.createElement('span');
+      nameSpan.classList.add('list-item-name');
+      nameSpan.textContent = item.name;
+
+      detailsDiv.appendChild(qtyInput);
+      detailsDiv.appendChild(unitSelectElem);
+      detailsDiv.appendChild(nameSpan);
+
+      // Remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.classList.add('remove-btn');
+      removeBtn.textContent = 'Remove';
+      removeBtn.title = 'Remove this item';
+      removeBtn.addEventListener('click', () => {
+        shoppingList.splice(idx, 1);
+        renderList();
+      });
+
+      li.appendChild(detailsDiv);
+      li.appendChild(removeBtn);
+      listElem.appendChild(li);
     });
+  }
 
-    // Dark mode toggle
-    darkModeToggle.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      const isDark = document.body.classList.contains('dark-mode');
-      darkModeToggle.setAttribute('aria-pressed', isDark);
-    });
+  // Autocomplete search for items
+  itemInput.addEventListener('input', () => {
+    const val = itemInput.value.toLowerCase();
+    closeAutocomplete();
 
-    // Sharing functions
-    function getListText() {
-      if (shoppingListItems.length === 0) return 'Shopping list is empty.';
-      return shoppingListItems
-        .map(i => `${i.qty} ${i.unit} - ${i.name}`)
-        .join('\n');
-    }
+    if (!val) return;
 
-    function shareWhatsApp() {
-      const text = encodeURIComponent(getListText());
-      const url = `https://wa.me/?text=${text}`;
-      window.open(url, '_blank');
-    }
+    const matches = availableItems.filter(item => item.name.toLowerCase().includes(val));
+    if (matches.length === 0) return;
 
-    function shareFacebook() {
-      // Facebook sharing with text is limited; share a URL or fallback to alert
-      alert('Facebook sharing with text not supported in this demo.');
-    }
-
-    function shareTwitter() {
-      const text = encodeURIComponent(getListText());
-      const url = `https://twitter.com/intent/tweet?text=${text}`;
-      window.open(url, '_blank');
-    }
-
-    function copyList() {
-      const text = getListText();
-      navigator.clipboard.writeText(text).then(() => {
-        alert('Shopping list copied to clipboard!');
+    matches.slice(0, 8).forEach(match => {
+      const div = document.createElement('div');
+      div.classList.add('autocomplete-item');
+      div.textContent = `${match.name} (${match.qty} ${match.unit})`;
+      div.addEventListener('click', () => {
+        itemInput.value = match.name;
+        quantityInput.value = match.qty;
+        unitSelect.value = match.unit;
+        closeAutocomplete();
       });
-    }
+      autocompleteList.appendChild(div);
+    });
+  });
 
-    // Initial render
-    renderAvailableList();
-    renderShoppingList();
-  </script>
+  function closeAutocomplete() {
+    autocompleteList.innerHTML = '';
+  }
+
+  document.addEventListener('click', (e) => {
+    if (e.target !== itemInput) closeAutocomplete();
+  });
+
+  // Dark mode toggle
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+  }
+
+  // Share functions
+  function shareText(text, url) {
+    if (navigator.share) {
+      navigator.share({
+        title: 'Shopping List',
+        text,
+        url
+      }).catch(console.error);
+    } else {
+      alert('Share not supported on this browser');
+    }
+  }
+
+  function getShoppingListText() {
+    if (shoppingList.length === 0) return 'Shopping list is empty.';
+    return shoppingList.map(item => `${item.qty} ${item.unit} ${item.name}`).join('\n');
+  }
+
+  function shareWhatsApp() {
+    const text = encodeURIComponent(getShoppingListText());
+    const url = `https://wa.me/?text=${text}`;
+    shareText(getShoppingListText(), url);
+  }
+
+  function shareTwitter() {
+    const text = encodeURIComponent(getShoppingListText());
+    const url = `https://twitter.com/intent/tweet?text=${text}`;
+    shareText(getShoppingListText(), url);
+  }
+</script>
+
 </body>
 </html>
 
