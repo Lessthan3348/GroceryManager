@@ -1,323 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shopping List with Share & Copy</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f0f0f0;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .dark-mode {
-      background: #121212;
-      color: #eee;
-    }
-    h1 {
-      margin-bottom: 1rem;
-    }
-    .input-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 1rem;
-    }
-    input[type="text"], input[type="number"], select {
-      padding: 8px;
-      font-size: 1rem;
-      flex: 1;
-    }
-    button {
-      cursor: pointer;
-      padding: 8px 14px;
-      font-size: 1rem;
-      background-color: #007bff;
-      border: none;
-      color: white;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-      user-select: none;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    #autocomplete-list {
-      position: relative;
-      max-height: 200px;
-      overflow-y: auto;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 1rem;
-      max-width: 500px;
-    }
-    .autocomplete-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px;
-      border-bottom: 1px solid #eee;
-      align-items: center;
-      font-size: 0.9rem;
-    }
-    .autocomplete-item:last-child {
-      border-bottom: none;
-    }
-    .autocomplete-item button {
-      background-color: #28a745;
-      padding: 5px 10px;
-      font-size: 0.8rem;
-      border-radius: 3px;
-      transition: background-color 0.2s ease;
-    }
-    .autocomplete-item button:hover {
-      background-color: #1e7e34;
-    }
-    ul#list {
-      list-style: none;
-      padding: 0;
-      max-width: 600px;
-      margin-bottom: 1rem;
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
-    ul#list li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 15px;
-      border-bottom: 1px solid #ddd;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
-    }
-    ul#list li:last-child {
-      border-bottom: none;
-    }
-    ul#list li:hover {
-      background-color: #f9f9f9;
-    }
-    .list-item-details {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1;
-    }
-    .list-item-name {
-      flex: 1;
-    }
-    input.quantity {
-      width: 70px;
-      padding: 5px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      text-align: right;
-    }
-    select {
-      padding: 5px;
-      font-size: 1rem;
-      border-radius: 4px;
-    }
-    button.remove-btn {
-      background-color: #dc3545;
-      margin-left: 15px;
-      padding: 6px 12px;
-      font-size: 0.9rem;
-      border-radius: 4px;
-      transition: background-color 0.3s ease;
-    }
-    button.remove-btn:hover {
-      background-color: #a71d2a;
-    }
-    .share, .copy-list, .toggle {
-      margin-top: 20px;
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-    .share button {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: none;
-      background-color: #25d366; /* WhatsApp green */
-      color: white;
-      user-select: none;
-      transition: background-color 0.3s ease;
-    }
-    .share button#share-twitter {
-      background-color: #1da1f2;
-    }
-    .share button:hover {
-      filter: brightness(85%);
-    }
-    .share svg {
-      width: 20px;
-      height: 20px;
-      fill: white;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Shopping List with Add Buttons</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 1rem;
+    display: flex;
+    gap: 2rem;
+    background: #f9f9f9;
+  }
+  /* Left column for predefined items */
+  .predefined-container {
+    width: 300px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 6px;
+  }
+  .predefined-container h2 {
+    margin-top: 0;
+  }
+  .predefined-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #eef3f7;
+  }
+  .predefined-item:hover {
+    background: #d9e2ef;
+  }
+  .predefined-item button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .predefined-item button:hover {
+    background-color: #0056b3;
+  }
+
+  /* Right container for inputs and list */
+  .right-container {
+    flex-grow: 1;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    font-weight: bold;
+    margin-top: 0.5rem;
+  }
+
+  input[type="text"], input[type="number"], select {
+    padding: 6px 8px;
+    margin-top: 4px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  input[type="number"] {
+    max-width: 100px;
+  }
+
+  #autocomplete-list {
+    position: relative;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 150px;
+    overflow-y: auto;
+    background: white;
+    z-index: 10;
+    border-radius: 0 0 4px 4px;
+  }
+  .autocomplete-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 8px;
+    cursor: pointer;
+    align-items: center;
+  }
+  .autocomplete-item:hover {
+    background-color: #f0f0f0;
+  }
+  .autocomplete-item button {
+    margin-left: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .autocomplete-item button:hover {
+    background-color: #1e7e34;
+  }
+
+  #list {
+    margin-top: 1rem;
+    padding-left: 0;
+    list-style-type: none;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: white;
+  }
+  #list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-bottom: 1px solid #eee;
+  }
+  #list li:last-child {
+    border-bottom: none;
+  }
+  .list-item-details {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-grow: 1;
+  }
+  .list-item-name {
+    font-weight: 600;
+    min-width: 120px;
+  }
+  input.quantity {
+    width: 70px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  select {
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  button.remove-btn {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  button.remove-btn:hover {
+    background-color: #a71d2a;
+  }
+
+  .buttons-container {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+  .buttons-container button {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    color: white;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-whatsapp {
+    background-color: #25d366;
+  }
+  .btn-whatsapp:hover {
+    background-color: #1ebe5b;
+  }
+  .btn-twitter {
+    background-color: #1da1f2;
+  }
+  .btn-twitter:hover {
+    background-color: #0d8ddb;
+  }
+  .btn-copy {
+    background-color: #6c757d;
+  }
+  .btn-copy:hover {
+    background-color: #565e64;
+  }
+
+</style>
 </head>
 <body>
-  <h1>Shopping List</h1>
 
-  <div class="input-row">
-    <input type="text" id="item" placeholder="Enter item name" autocomplete="off" />
-    <input type="number" id="quantity" min="0.01" step="0.01" value="1" />
-    <select id="unit">
-      <option value="st">st</option>
-      <option value="kg">kg</option>
-      <option value="liter">liter</option>
-      <option value="påse">påse</option>
-      <option value="dunk">dunk</option>
-      <option value="hink">hink</option>
-      <option value="flak">flak</option>
-      <option value="spray">spray</option>
-      <option value="ask">ask</option>
-      <option value="knippe">knippe</option>
-      <option value="burk">burk</option>
-      <option value="kartong">kartong</option>
-    </select>
-    <button onclick="addItem()">Add</button>
+<!-- Left: Predefined Items -->
+<div class="predefined-container">
+  <h2>Predefined Items</h2>
+  <div id="predefined-list">
+    <!-- Items inserted here by JS -->
   </div>
+</div>
 
+<!-- Right: Input fields and Shopping List -->
+<div class="right-container">
+  <label for="item">Item</label>
+  <input type="text" id="item" placeholder="Type to search or add new item" autocomplete="off" />
   <div id="autocomplete-list"></div>
+
+  <label for="quantity">Quantity</label>
+  <input type="number" id="quantity" value="1" min="0.01" step="0.01" />
+
+  <label for="unit">Unit</label>
+  <select id="unit">
+    <option value="st">st</option>
+    <option value="kg">kg</option>
+    <option value="liter">liter</option>
+    <option value="påse">påse</option>
+    <option value="dunk">dunk</option>
+    <option value="hink">hink</option>
+    <option value="flak">flak</option>
+    <option value="spray">spray</option>
+    <option value="ask">ask</option>
+    <option value="knippe">knippe</option>
+    <option value="burk">burk</option>
+    <option value="kartong">kartong</option>
+  </select>
+
+  <button style="margin-top: 10px; padding: 8px;" onclick="addItem()">Add to List</button>
 
   <ul id="list"></ul>
 
-  <div class="share">
-    <button id="share-whatsapp" title="Share on WhatsApp" onclick="shareWhatsApp()">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 0 5.37 0 12a11.88 11.88 0 001.61 6L0 24l6-1.6a11.94 11.94 0 006 1.6c6.63 0 12-5.37 12-12 0-3.2-1.25-6.2-3.48-8.52zm-8.3 17.43c-1.86 0-3.56-.49-5.1-1.33l-.36-.21-3.79 1 1.02-3.68-.23-.37a9.48 9.48 0 01-1.5-4.95c0-5.22 4.24-9.46 9.46-9.46 2.52 0 4.89.98 6.67 2.76a9.44 9.44 0 012.77 6.7 9.47 9.47 0 01-9.47 9.46zm5.27-7.1c-.29-.15-1.7-.83-1.96-.92-.26-.09-.45-.14-.64.14-.18.27-.7.92-.86 1.11-.16.18-.32.2-.6.07a7.78 7.78 0 01-2.29-1.42 8.75 8.75 0 01-1.63-2c-.17-.29-.02-.44.13-.59.13-.13.29-.32.44-.48.15-.16.2-.27.3-.46.1-.18.05-.33-.02-.48-.07-.15-.63-1.53-.87-2.11-.23-.56-.47-.48-.64-.49l-.55-.01a1.06 1.06 0 00-.77.36c-.27.27-1.04 1.01-1.04 2.46s1.07 2.86 1.22 3.06c.15.2 2.1 3.2 5.1 4.49a19.55 19.55 0 002.3.97c.3.13.6.11.83.07.25-.04.78-.31.89-.62.1-.3.1-.55.07-.62-.03-.06-.26-.1-.55-.24z"></path>
+  <div class="buttons-container">
+    <button class="btn-whatsapp" onclick="shareWhatsApp()">
+      <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" fill="white" viewBox="0 0 24 24">
+        <path d="M20.52 3.48a11.91 11.91 0 00-16.83 0A11.91 11.91 0 003.48 20.52l-2.02 6.18 6.18-2.02a11.91 11.91 0 0013.9-13.9zM7.76 17.47l-.61-2.21c-.04-.15-.15-.24-.29-.24H5.88a.23.23 0 01-.21-.15c-.14-.31-.39-.92-.54-1.33-.14-.38.03-.61.21-.71a2.57 2.57 0 011.86-.44c.25.01.42.2.49.39.06.16.13.45.19.66.06.19.03.31-.1.5-.13.18-.27.39-.39.57-.05.08-.03.13.03.23.13.22.6.98.83 1.3.12.18.22.25.37.25.08 0 .18-.01.27-.02.15-.02.63-.25.72-.35.06-.07.06-.13.03-.23a6.49 6.49 0 00-.55-1.13c-.09-.18-.43-.66-.43-.66s-.02-.04-.01-.06c.04-.05.26-.13.34-.17a.87.87 0 011.3.45c.14.3.25.6.36.9.14.39.3.98.36 1.39a1.87 1.87 0 01-1.16 1.73 2.35 2.35 0 01-1.6.24z"/>
       </svg>
       WhatsApp
     </button>
 
-    <button id="share-twitter" title="Share on Twitter" onclick="shareTwitter()">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M23.954 4.569a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 9.987 9.987 0 01-3.127 1.195 4.92 4.92 0 00-8.384 4.482A13.978 13.978 0 011.67 3.149 4.822 4.822 0 003.16 9.722a4.904 4.904 0 01-2.229-.616v.061a4.918 4.918 0 003.946 4.817 4.996 4.996 0 01-2.224.084 4.936 4.936 0 004.6 3.417 9.867 9.867 0 01-6.102 2.102c-.396 0-.79-.023-1.17-.067a13.945 13.945 0 007.557 2.212c9.054 0 14-7.496 14-13.986 0-.21 0-.42-.015-.63a9.936 9.936 0 002.457-2.548l-.047-.02z"></path>
+    <button class="btn-twitter" onclick="shareTwitter()">
+      <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" fill="white" viewBox="0 0 24 24">
+        <path d="M23 3a10.9 10.9 0 01-3.14.86 4.48 4.48 0 001.94-2.48 10.85 10.85 0 01-3.45 1.32 4.52 4.52 0 00-7.69 4.12 12.82 12.82 0 01-9.29-4.7 4.53 4.53 0 001.4 6.05 4.48 4.48 0 01-2.05-.57v.06a4.52 4.52 0 003.62 4.44 4.5 4.5 0 01-2.04.08 4.53 4.53 0 004.23 3.15 9.05 9.05 0 01-5.6 1.93A9.4 9.4 0 010 19.54a12.75 12.75 0 006.92 2.03c8.3 0 12.84-6.87 12.84-12.83 0-.2 0-.39-.01-.58A9.21 9.21 0 0023 3z"/>
       </svg>
       Twitter
     </button>
+
+    <button class="btn-copy" onclick="copyListToClipboard()">
+      Copy List to Clipboard
+    </button>
   </div>
+</div>
 
-  <div class="copy-list" style="margin-top: 1rem;">
-    <button onclick="copyListToClipboard()">Copy List to Clipboard</button>
-  </div>
+<script>
+  const predefinedItems = [
+    "1 påse napolitana salads mix",
+    "1 kg tomat",
+    "1 kg championer",
+    "1 kg rödlök",
+    "1 st margarin flytande rama",
+    "1 dunk olivolja extra virgin 5 L",
+    "1 kg gurka ofilmad",
+    "1 kg citron",
+    "1 hink handskalade räkor",
+    "1/2 kg granny smith äpplen gröna",
+    "1 flak Ramlösa naturell i burk",
+    "1 flak coca cola i burk",
+    "1 flak coca cola zero i burk",
+    "1 liter standard mjölk",
+    "1 spray grädde",
+    "1 liter rama grädde",
+    "1 påse riven mozzarella ost",
+    "1 påse riven grano padano",
+    "2 st 500 gram smör red label arla",
+    "15 st bakad potatis",
+    "5 kg spaghetti",
+    "1 chèvre rulle",
+    "1 påse mospotatis chefs cut",
+    "1 ask ruccola",
+    "1 kg lime",
+    "1 ask basilika",
+    "1 knippe färsk mynta",
+    "1 kg apelsin",
+    "1 ask salami Milano",
+    "1 burk stenbitsrom",
+    "1 hink kokta ägg skalade",
+    "1 påse jordnötter saltade",
+    "1 påse valnötskärnor",
+    "1 påse vitlökskrutonger",
+    "1 kartong grillad kycklingbröst fryst",
+    "1 knippe dill",
+    "1 kg tvättad kul potatis",
+    "1 roman huvuden",
+    "1 st godmorgon apelsinjuice",
+    "1 st godmorgon äpple juice",
+    "1 flak Sprite i burk",
+    "1 kartong mozzarella bollar",
+    "1 ask Prochutto crudo",
+    "1 kartong fryst lingon",
+    "1 crisp sallad"
+  ];
 
-  <script>
-    const predefinedItems = [
-      "1 påse napolitana salads mix",
-      "1 kg tomat",
-      "1 kg championer",
-      "1 kg rödlök",
-      "1 st margarin flytande rama",
-      "1 dunk olivolja extra virgin 5 L",
-      "1 kg gurka ofilmad",
-      "1 kg citron",
-      "1 hink handskalade räkor",
-      "1/2 kg granny smith äpplen gröna",
-      "1 flak Ramlösa naturell i burk",
-      "1 flak coca cola i burk",
-      "1 flak coca cola zero i burk",
-      "1 liter standard mjölk",
-      "1 spray grädde",
-      "1 liter rama grädde",
-      "1 påse riven mozzarella ost",
-      "1 påse riven grano padano",
-      "2 st 500 gram smör red label arla",
-      "15 st bakad potatis",
-      "5 kg spaghetti",
-      "1 chèvre rulle",
-      "1 påse mospotatis chefs cut",
-      "1 ask ruccola",
-      "1 kg lime",
-      "1 ask basilika",
-      "1 knippe färsk mynta",
-      "1 kg apelsin",
-      "1 ask salami Milano",
-      "1 burk stenbitsrom",
-      "1 hink kokta ägg skalade",
-      "1 påse jordnötter saltade",
-      "1 påse valnötskärnor",
-      "1 påse vitlökskrutonger",
-      "1 kartong grillad kycklingbröst fryst",
-      "1 knippe dill",
-      "1 kg tvättad kul potatis",
-      "1 roman huvuden",
-      "1 st godmorgon apelsinjuice",
-      "1 st godmorgon äpple juice",
-      "1 flak Sprite i burk",
-      "1 kartong mozzarella bollar",
-      "1 ask Prochutto crudo",
-      "1 kartong fryst lingon",
-      "1 crisp sallad"
-    ];
+  const predefinedListDiv = document.getElementById("predefined-list");
+  const itemInput = document.getElementById("item");
+  const quantityInput = document.getElementById("quantity");
+  const unitSelect = document.getElementById("unit");
+  const autocompleteList = document.getElementById("autocomplete-list");
+  const listElement = document.getElementById("list");
 
-    const itemInput = document.getElementById("item");
-    const quantityInput = document.getElementById("quantity");
-    const unitSelect = document.getElementById("unit");
-    const autocompleteList = document.getElementById("autocomplete-list");
-    const listElement = document.getElementById("list");
+  // Create vertical list with Add buttons on left side
+  function renderPredefinedItems() {
+    predefinedListDiv.innerHTML = "";
+    predefinedItems.forEach((item) => {
+      const div = document.createElement("div");
+      div.className = "predefined-item";
 
-    // Parse item string into qty, unit, and name
-    function parseItemString(itemStr) {
-      let qty = 1;
-      let unit = "st";
-      let name = itemStr;
+      const span = document.createElement("span");
+      span.textContent = item;
 
-      const parts = itemStr.split(" ");
-      if (parts.length > 1) {
-        // Try fraction first e.g. 1/2
-        if (parts[0].includes("/")) {
-          const fractionParts = parts[0].split("/");
-          if (fractionParts.length === 2) {
-            qty = parseFloat(fractionParts[0]) / parseFloat(fractionParts[1]);
-          }
-        } else if (!isNaN(parts[0].replace(",", "."))) {
-          qty = parseFloat(parts[0].replace(",", "."));
-        }
+      const addBtn = document.createElement("button");
+      addBtn.textContent = "Add";
+      addBtn.title = "Add to shopping list";
+      addBtn.onclick = () => {
+        // Parse quantity, unit, and name from the item string:
+        const parsed = parseItemString(item);
+        itemInput.value = parsed.name;
+        quantityInput.value = parsed.quantity;
+        setUnitValue(parsed.unit);
+        addItem();
+      };
 
-        if (["st","kg","liter","påse","dunk","hink","flak","spray","ask","knippe","burk","kartong"].includes(parts[1])) {
-          unit = parts[1];
-          name = parts.slice(2).join(" ");
-        } else {
-          name = parts.slice(1).join(" ");
-        }
+      div.appendChild(span);
+      div.appendChild(addBtn);
+
+      predefinedListDiv.appendChild(div);
+    });
+  }
+
+  function setUnitValue(unit) {
+    for (let option of unitSelect.options) {
+      if (option.value === unit) {
+        unitSelect.value = unit;
+        return;
       }
+    }
+    // If not found, add it dynamically
+    let opt = document.createElement("option");
+    opt.value = unit;
+    opt.textContent = unit;
+    unitSelect.appendChild(opt);
+    unitSelect.value = unit;
+  }
 
-      return { qty, unit, name };
+  // Parse string like "1 kg tomat" or "1/2 kg granny smith äpplen gröna"
+  function parseItemString(str) {
+    // Extract quantity (could be fractional), unit, and name
+    const regex = /^([\d\/\.]+)\s+(\S+)\s+(.+)$/;
+    const match = str.match(regex);
+    if (!match) {
+      // fallback: quantity 1, unit st, full string as name
+      return { quantity: 1, unit: "st", name: str };
+    }
+    let quantityStr = match[1];
+    let unit = match[2];
+    let name = match[3];
+
+    // Convert fraction if needed
+    let quantity = 1;
+    if (quantityStr.includes("/")) {
+      const parts = quantityStr.split("/");
+      if (parts.length === 2) {
+        quantity = parseFloat(parts[0]) / parseFloat(parts[1]);
+      }
+    } else {
+      quantity = parseFloat(quantityStr);
     }
 
-    // Add item to list
-    function addItem(name = null, quantity = null, unit = null, scrollToEnd = true) {
-      // If called without args, take from input fields
-      if (!name) {
-        name = itemInput.value.trim();
-        quantity = parseFloat(quantityInput.value);
-        unit = unitSelect.value;
-      }
-      if (!name) return;
+    return { quantity, unit, name };
+  }
 
-      // Prevent duplicates by name+unit
-      for (const li of listElement.children) {
-        if (
-          li.dataset.name.toLowerCase() === name.toLowerCase() &&
-          li.dataset.unit === unit
-        ) {
-          // just update quantity
-          const qtyInput = li.querySelector("input.quantity");
-          qtyInput.value = (
-            parseFloat(qtyInput.value) + (quantity || 1)
-          ).toFixed(2);
-          return;
-        }
-      }
+  // Add item to list
+  function addItem() {
+    let name = itemInput.value.trim();
+    if (!name) return;
 
+    let quantity = parseFloat(quantityInput.value);
+    if (isNaN(quantity) || quantity <= 0) quantity = 1;
+
+    let unit = unitSelect.value || "st";
+
+    // Check if item already exists (by name and unit)
+    let existingItem = Array.from(listElement.children).find(
+      (li) => li.dataset.name === name && li.dataset.unit === unit
+    );
+
+    if (existingItem) {
+      // If exists, update quantity
+      const qtyInput = existingItem.querySelector("input.quantity");
+      qtyInput.value = (parseFloat(qtyInput.value) + quantity).toFixed(2);
+    } else {
+      // Create new list item
       const li = document.createElement("li");
       li.dataset.name = name;
       li.dataset.unit = unit;
@@ -326,170 +417,165 @@
       detailsDiv.className = "list-item-details";
 
       const nameSpan = document.createElement("span");
-      nameSpan.textContent = name;
       nameSpan.className = "list-item-name";
+      nameSpan.textContent = name;
 
       const qtyInput = document.createElement("input");
       qtyInput.type = "number";
       qtyInput.min = "0.01";
       qtyInput.step = "0.01";
-      qtyInput.value = (quantity || 1).toFixed(2);
       qtyInput.className = "quantity";
-      qtyInput.title = "Adjust quantity";
-      qtyInput.addEventListener("change", () => {
-        if (parseFloat(qtyInput.value) < 0.01 || isNaN(parseFloat(qtyInput.value))) {
-          qtyInput.value = "0.01";
-        }
-      });
+      qtyInput.value = quantity.toFixed(2);
 
-      const unitSelectInList = document.createElement("select");
-      ["st", "kg", "liter", "påse", "dunk", "hink", "flak", "spray", "ask", "knippe", "burk", "kartong"].forEach((u) => {
-        const option = document.createElement("option");
-        option.value = u;
-        option.textContent = u;
-        unitSelectInList.appendChild(option);
+      const unitSelectInner = document.createElement("select");
+      ["st", "kg", "liter", "påse", "dunk", "hink", "flak", "spray", "ask", "knippe", "burk", "kartong"].forEach(
+        (unitOption) => {
+          let option = document.createElement("option");
+          option.value = unitOption;
+          option.textContent = unitOption;
+          if (unitOption === unit) option.selected = true;
+          unitSelectInner.appendChild(option);
+        }
+      );
+
+      // Update dataset unit when changed
+      unitSelectInner.addEventListener("change", () => {
+        li.dataset.unit = unitSelectInner.value;
       });
-      unitSelectInList.value = unit;
-      unitSelectInList.title = "Change unit";
-      unitSelectInList.addEventListener("change", () => {
-        li.dataset.unit = unitSelectInList.value;
+      // Update dataset quantity when changed
+      qtyInput.addEventListener("change", () => {
+        if (qtyInput.value < 0) qtyInput.value = 0;
       });
 
       detailsDiv.appendChild(nameSpan);
       detailsDiv.appendChild(qtyInput);
-      detailsDiv.appendChild(unitSelectInList);
+      detailsDiv.appendChild(unitSelectInner);
 
       const removeBtn = document.createElement("button");
-      removeBtn.textContent = "Remove";
       removeBtn.className = "remove-btn";
-      removeBtn.title = "Remove item";
-      removeBtn.onclick = () => li.remove();
+      removeBtn.textContent = "Remove";
+      removeBtn.onclick = () => {
+        li.remove();
+      };
 
       li.appendChild(detailsDiv);
       li.appendChild(removeBtn);
 
       listElement.appendChild(li);
-
-      if (scrollToEnd) {
-        listElement.scrollTop = listElement.scrollHeight;
-      }
     }
 
-    // Populate autocomplete suggestions with Add button
-    function showAutocomplete() {
-      autocompleteList.innerHTML = "";
-      const val = itemInput.value.toLowerCase();
-      if (!val) return;
+    itemInput.value = "";
+    quantityInput.value = 1;
+    unitSelect.value = "st";
+    clearAutocomplete();
+  }
 
-      const filtered = predefinedItems.filter((item) =>
-        item.toLowerCase().includes(val)
-      );
+  // Autocomplete filtering
+  itemInput.addEventListener("input", () => {
+    const val = itemInput.value.toLowerCase();
+    autocompleteList.innerHTML = "";
 
-      if (filtered.length === 0) return;
+    if (!val) return;
 
-      filtered.slice(0, 6).forEach((item) => {
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "autocomplete-item";
+    const filtered = predefinedItems.filter((item) => item.toLowerCase().includes(val));
 
-        const textSpan = document.createElement("span");
-        textSpan.textContent = item;
-        textSpan.style.flex = "1";
-        textSpan.style.cursor = "pointer";
-        textSpan.title = "Click to autofill";
-        textSpan.onclick = () => {
-          parseItemForQuantityUnit(item);
-          clearAutocomplete();
-          quantityInput.focus();
-        };
+    filtered.forEach((item) => {
+      const div = document.createElement("div");
+      div.className = "autocomplete-item";
 
-        const addBtn = document.createElement("button");
-        addBtn.textContent = "Add";
-        addBtn.title = "Add this item";
-        addBtn.onclick = () => {
-          const { qty, unit, name } = parseItemString(item);
-          addItem(name, qty, unit);
-          clearAutocomplete();
-        };
+      const span = document.createElement("span");
+      span.textContent = item;
+      span.style.cursor = "pointer";
 
-        itemDiv.appendChild(textSpan);
-        itemDiv.appendChild(addBtn);
-        autocompleteList.appendChild(itemDiv);
-      });
-    }
+      // Click fills input fields
+      span.onclick = () => {
+        const parsed = parseItemString(item);
+        itemInput.value = parsed.name;
+        quantityInput.value = parsed.quantity;
+        setUnitValue(parsed.unit);
+        clearAutocomplete();
+      };
 
-    itemInput.addEventListener("input", showAutocomplete);
-
-    function clearAutocomplete() {
-      autocompleteList.innerHTML = "";
-    }
-
-    function parseItemForQuantityUnit(item) {
-      const { qty, unit, name } = parseItemString(item);
-      quantityInput.value = qty.toFixed(2);
-      unitSelect.value = unit;
-      itemInput.value = name;
-    }
-
-    // Share on WhatsApp
-    function shareWhatsApp() {
-      const text = generateListText();
-      const urlEncoded = encodeURIComponent(text);
-      const whatsappUrl = `https://wa.me/?text=${urlEncoded}`;
-      window.open(whatsappUrl, "_blank");
-    }
-
-    // Share on Twitter
-    function shareTwitter() {
-      let tweet = generateListText();
-      if (tweet.length > 280) {
-        tweet = tweet.substring(0, 277) + "...";
-      }
-      const urlEncoded = encodeURIComponent(tweet);
-      const twitterUrl = `https://twitter.com/intent/tweet?text=${urlEncoded}`;
-      window.open(twitterUrl, "_blank");
-    }
-
-    function generateListText() {
-      let text = "My Shopping List:\n";
-      [...listElement.children].forEach((li, i) => {
-        const name = li.dataset.name;
-        const qty = li.querySelector("input.quantity").value;
-        const unit = li.querySelector("select").value;
-        text += `${i + 1}. ${qty} ${unit} ${name}\n`;
-      });
-      return text.trim();
-    }
-
-    // Copy list to clipboard
-    function copyListToClipboard() {
-      const text = generateListText();
-      navigator.clipboard.writeText(text).then(() => {
-        alert("Shopping list copied to clipboard!");
-      }, () => {
-        alert("Failed to copy list to clipboard.");
-      });
-    }
-
-    // Add item when pressing Enter on item input
-    itemInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
+      const addBtn = document.createElement("button");
+      addBtn.textContent = "Add";
+      addBtn.title = "Add to list";
+      addBtn.onclick = (e) => {
+        e.stopPropagation();
+        const parsed = parseItemString(item);
+        itemInput.value = parsed.name;
+        quantityInput.value = parsed.quantity;
+        setUnitValue(parsed.unit);
         addItem();
         clearAutocomplete();
-        itemInput.focus();
-      }
-    });
+      };
 
-    // Add item when pressing Enter on quantity input
-    quantityInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        addItem();
-        clearAutocomplete();
-        itemInput.focus();
-      }
+      div.appendChild(span);
+      div.appendChild(addBtn);
+
+      autocompleteList.appendChild(div);
     });
-  </script>
+  });
+
+  function clearAutocomplete() {
+    autocompleteList.innerHTML = "";
+  }
+
+  // Generate list text for sharing/copying
+  function generateListText() {
+    let text = "";
+    const items = listElement.querySelectorAll("li");
+    items.forEach((li, i) => {
+      const name = li.dataset.name;
+      const qty = li.querySelector("input.quantity").value;
+      const unit = li.querySelector("select").value;
+      text += `${i + 1}. ${qty} ${unit} ${name}\n`;
+    });
+    return text.trim();
+  }
+
+  // Copy list to clipboard
+  function copyListToClipboard() {
+    const text = generateListText();
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Shopping list copied to clipboard!");
+    }, () => {
+      alert("Failed to copy list to clipboard.");
+    });
+  }
+
+  // Share on WhatsApp
+  function shareWhatsApp() {
+    const text = encodeURIComponent(generateListText());
+    const url = `https://api.whatsapp.com/send?text=${text}`;
+    window.open(url, "_blank");
+  }
+
+  // Share on Twitter
+  function shareTwitter() {
+    const text = encodeURIComponent(generateListText());
+    const url = `https://twitter.com/intent/tweet?text=${text}`;
+    window.open(url, "_blank");
+  }
+
+  // Add item on Enter key for item and quantity inputs
+  itemInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addItem();
+      clearAutocomplete();
+      itemInput.focus();
+    }
+  });
+  quantityInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addItem();
+      clearAutocomplete();
+      itemInput.focus();
+    }
+  });
+
+  renderPredefinedItems();
+</script>
 </body>
 </html>
-
