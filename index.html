@@ -6,17 +6,31 @@
   <title>Grocery Manager</title>
   <style>
     :root {
-      --bg: #f0f0f0;
-      --card-bg: #fff;
-      --text: #333;
+      --bg-light: #f0f0f0;
+      --bg-dark: #121212;
+      --card-light: #fff;
+      --card-dark: #1e1e1e;
+      --text-light: #333;
+      --text-dark: #ddd;
       --primary: #ff5722;
-      --button: #007bff;
-      --remove: #dc3545;
-      --undo: #6f42c1;
-      --whatsapp: #25D366;
-      --facebook: #1877F2;
-      --copy: #555;
+      --button-add: #007bff;
+      --button-remove: #dc3545;
+      --button-undo: #6f42c1;
+      --button-copy: #555;
+      --button-ws: #25D366;
+      --button-fb: #1877F2;
     }
+    html[data-theme="light"] {
+      --bg: var(--bg-light);
+      --card-bg: var(--card-light);
+      --text: var(--text-light);
+    }
+    html[data-theme="dark"] {
+      --bg: var(--bg-dark);
+      --card-bg: var(--card-dark);
+      --text: var(--text-dark);
+    }
+
     * { box-sizing: border-box; }
     body {
       margin: 0;
@@ -25,8 +39,8 @@
       background: var(--bg);
       color: var(--text);
     }
-    .container { max-width: 700px; margin: auto; }
-    h1 { margin-bottom: 1rem; color: var(--primary); }
+    .container { max-width: 800px; margin: auto; }
+    h1 { color: var(--primary); margin-bottom: 1rem; }
     .controls {
       display: flex;
       flex-wrap: wrap;
@@ -44,10 +58,11 @@
     }
     .controls button:hover { transform: scale(1.05); }
     #darkToggle { background: var(--primary); }
-    #undoBtn { background: var(--undo); }
-    #copyBtn { background: var(--copy); }
-    #whatsappBtn { background: var(--whatsapp); }
-    #facebookBtn { background: var(--facebook); }
+    #undoBtn { background: var(--button-undo); }
+    #copyBtn { background: var(--button-copy); }
+    #whatsappBtn { background: var(--button-ws); }
+    #facebookBtn { background: var(--button-fb); }
+
     .list {
       background: var(--card-bg);
       border-radius: 8px;
@@ -55,17 +70,33 @@
       box-shadow: 0 2px 5px rgba(0,0,0,.1);
       margin-bottom: 2rem;
     }
+    .search {
+      margin-bottom: 1rem;
+    }
+    .search input {
+      width: 100%;
+      padding: .5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
     .list-item {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: .5rem;
       padding: .5rem 0;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #4442;
     }
     .list-item:last-child { border-bottom: none; }
     .list-item span { flex: 1; }
+    .list-item input {
+      width: 4rem;
+      padding: .3rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: .9rem;
+    }
     .list-item button {
-      margin-left: 1rem;
       padding: .4rem .8rem;
       border: none;
       border-radius: 4px;
@@ -75,8 +106,8 @@
       transition: transform .2s;
     }
     .list-item button:hover { transform: scale(1.05); }
-    .btn-add { background: var(--button); }
-    .btn-remove { background: var(--remove); }
+    .btn-add    { background: var(--button-add); }
+    .btn-remove { background: var(--button-remove); }
   </style>
 </head>
 <body>
@@ -90,73 +121,80 @@
       <button id="facebookBtn">Share Facebook</button>
     </div>
 
+    <div class="list search">
+      <input type="text" id="search" placeholder="Search items…">
+      <p id="resultCount"></p>
+    </div>
+
     <div class="list" id="availableList">
-      <!-- Available items rendered here -->
+      <!-- Available items -->
     </div>
 
     <h2>Your List</h2>
     <div class="list" id="groceryList">
-      <!-- Your grocery items rendered here -->
+      <!-- Your grocery items -->
     </div>
   </div>
 
   <script>
   (function(){
-    const items = [
-      "Påse Napolitana salads mix",
-      "Tomat",
-      "Championer",
-      "Rödlök",
-      "Margarin flytande rama",
-      "Olivolja extra virgin",
-      "Gurka ofilmad",
-      "Citron",
-      "Handskalade räkor",
-      "Granny Smith äpplen gröna",
-      "Ramlösa naturell i burk",
-      "Coca Cola i burk",
-      "Coca Cola Zero i burk",
-      "Standard mjölk",
-      "Spray grädde",
-      "Rama grädde",
-      "Riven mozzarella ost",
-      "Riven grano padano",
-      "Smör red label Arla",
-      "Bakad potatis",
-      "Spaghetti",
-      "Chèvre rulle",
-      "Mospotatis chefs cut",
-      "Ruccola",
-      "Lime",
-      "Basilika",
-      "Färsk mynta",
-      "Apelsin",
-      "Salami Milano",
-      "Stenbitsrom",
-      "Kokta ägg skalade",
-      "Jordnötter saltade",
-      "Valnötskärnor",
-      "Vitlökskrutonger",
-      "Grillad kycklingbröst fryst",
-      "Dill",
-      "Tvättad kul potatis",
-      "Roman huvuden",
-      "Godmorgon apelsinjuice",
-      "Godmorgon äpple juice",
-      "Sprite i burk",
-      "Mozzarella bollar",
-      "Prochutto crudo",
-      "Fryst lingon",
-      "Crisp sallad"
+    const allItems = [
+      {name:"Påse Napolitana salads mix", quantity:1, unit:"påse"},
+      {name:"Tomat", quantity:1, unit:"kg"},
+      {name:"Championer", quantity:1, unit:"kg"},
+      {name:"Rödlök", quantity:1, unit:"kg"},
+      {name:"Margarin flytande rama", quantity:1, unit:"st"},
+      {name:"Olivolja extra virgin", quantity:5, unit:"L"},
+      {name:"Gurka ofilmad", quantity:1, unit:"kg"},
+      {name:"Citron", quantity:1, unit:"kg"},
+      {name:"Handskalade räkor", quantity:1, unit:"hink"},
+      {name:"Granny Smith äpplen gröna", quantity:0.5, unit:"kg"},
+      {name:"Ramlösa naturell i burk", quantity:1, unit:"flak"},
+      {name:"Coca Cola i burk", quantity:1, unit:"flak"},
+      {name:"Coca Cola Zero i burk", quantity:1, unit:"flak"},
+      {name:"Standard mjölk", quantity:1, unit:"L"},
+      {name:"Spray grädde", quantity:1, unit:"st"},
+      {name:"Rama grädde", quantity:1, unit:"L"},
+      {name:"Riven mozzarella ost", quantity:1, unit:"påse"},
+      {name:"Riven grano padano", quantity:1, unit:"påse"},
+      {name:"Smör red label Arla", quantity:2, unit:"x500g"},
+      {name:"Bakad potatis", quantity:15, unit:"st"},
+      {name:"Spaghetti", quantity:5, unit:"kg"},
+      {name:"Chèvre rulle", quantity:1, unit:"st"},
+      {name:"Mospotatis chefs cut", quantity:1, unit:"påse"},
+      {name:"Ruccola", quantity:1, unit:"ask"},
+      {name:"Lime", quantity:1, unit:"kg"},
+      {name:"Basilika", quantity:1, unit:"ask"},
+      {name:"Färsk mynta", quantity:1, unit:"knippe"},
+      {name:"Apelsin", quantity:1, unit:"kg"},
+      {name:"Salami Milano", quantity:1, unit:"ask"},
+      {name:"Stenbitsrom", quantity:1, unit:"burk"},
+      {name:"Kokta ägg skalade", quantity:1, unit:"hink"},
+      {name:"Jordnötter saltade", quantity:1, unit:"påse"},
+      {name:"Valnötskärnor", quantity:1, unit:"påse"},
+      {name:"Vitlökskrutonger", quantity:1, unit:"påse"},
+      {name:"Grillad kycklingbröst fryst", quantity:1, unit:"kartong"},
+      {name:"Dill", quantity:1, unit:"knippe"},
+      {name:"Tvättad kul potatis", quantity:1, unit:"kg"},
+      {name:"Roman huvuden", quantity:1, unit:"st"},
+      {name:"Godmorgon apelsinjuice", quantity:1, unit:"st"},
+      {name:"Godmorgon äpple juice", quantity:1, unit:"st"},
+      {name:"Sprite i burk", quantity:1, unit:"flak"},
+      {name:"Mozzarella bollar", quantity:1, unit:"kartong"},
+      {name:"Prochutto crudo", quantity:1, unit:"ask"},
+      {name:"Fryst lingon", quantity:1, unit:"kartong"},
+      {name:"Crisp sallad", quantity:1, unit:"st"}
     ];
 
-    const availableList = document.getElementById('availableList');
-    const groceryList  = document.getElementById('groceryList');
-    const darkToggle   = document.getElementById('darkToggle');
-    const undoBtn      = document.getElementById('undoBtn');
-    const copyBtn      = document.getElementById('copyBtn');
-    const whatsappBtn  = document.getElementById('whatsappBtn');
-    const facebookBtn  = document.getElementById('facebookBtn');
+    const searchInput   = document.getElementById('search');
+    const resultCount   = document.getElementById('resultCount');
+    const availList     = document.getElementById('availableList');
+    const groceryList   = document.getElementById('groceryList');
+    const darkToggle    = document.getElementById('darkToggle');
+    const undoBtn       = document.getElementById('undoBtn');
+    const copyBtn       = document.getElementById('copyBtn');
+    const whatsappBtn   = document.getElementById('whatsappBtn');
+    const facebookBtn   = document.getElementById('facebookBtn');
 
     let state = {
       grocery: JSON.parse(localStorage.getItem('grocery')) || [],
@@ -169,71 +207,88 @@
       localStorage.setItem('dark', JSON.stringify(state.dark));
     }
 
-    function renderAvailable() {
-      availableList.innerHTML = '';
-      items.forEach(name => {
+    function renderAvailable(filter="") {
+      availList.innerHTML = '';
+      const filtered = allItems.filter(i => i.name.toLowerCase().includes(filter.toLowerCase())
+        && !state.grocery.find(g=>g.name===i.name));
+      resultCount.textContent = `Found ${filtered.length} items`;
+      filtered.forEach(item => {
         const div = document.createElement('div');
         div.className = 'list-item';
         div.innerHTML = `
-          <span>${name}</span>
+          <span>${item.name} (${item.quantity} ${item.unit})</span>
           <button class="btn-add">Add</button>
         `;
-        div.querySelector('button').addEventListener('click', () => {
-          state.grocery.push(name);
-          save(); renderGrocery();
-        });
-        availableList.appendChild(div);
+        div.querySelector('button').onclick = () => {
+          state.grocery.push({...item});
+          save(); renderGrocery(); renderAvailable(searchInput.value);
+        };
+        availList.appendChild(div);
       });
+      if(!filtered.length) availList.innerHTML = '<p>No items found</p>';
     }
 
     function renderGrocery() {
       groceryList.innerHTML = '';
-      state.grocery.forEach((name, idx) => {
+      state.grocery.forEach((item, idx) => {
         const div = document.createElement('div');
         div.className = 'list-item';
         div.innerHTML = `
-          <span>${name}</span>
+          <span>${item.name}</span>
+          <input type="number" value="${item.quantity}" min="0">
+          <input type="text" value="${item.unit}">
           <button class="btn-remove">Remove</button>
         `;
-        div.querySelector('button').addEventListener('click', () => {
-          state.lastRemoved = { name, idx };
-          state.grocery.splice(idx, 1);
+        const inputs = div.querySelectorAll('input');
+        inputs[0].onchange = e=>{
+          state.grocery[idx].quantity = parseFloat(e.target.value);
+          save();
+        };
+        inputs[1].onchange = e=>{
+          state.grocery[idx].unit = e.target.value;
+          save();
+        };
+        div.querySelector('button').onclick = () => {
+          state.lastRemoved = {...item, idx};
+          state.grocery.splice(idx,1);
           undoBtn.disabled = false;
-          save(); renderGrocery();
-        });
+          save(); renderGrocery(); renderAvailable(searchInput.value);
+        };
         groceryList.appendChild(div);
       });
     }
 
     function getText() {
-      return state.grocery.join('\n');
+      return state.grocery.map(i=>`${i.name} (${i.quantity} ${i.unit})`).join('\n');
     }
     function copyList() {
       navigator.clipboard.writeText(getText());
-      copyBtn.textContent = 'Copied!';
-      setTimeout(() => copyBtn.textContent = 'Copy List', 1500);
+      copyBtn.textContent='Copied!';
+      setTimeout(()=>copyBtn.textContent='Copy List',1500);
     }
     function shareURL(base) {
       window.open(base + encodeURIComponent(getText()), '_blank');
     }
 
-    darkToggle.onclick = () => {
+    darkToggle.onclick = ()=> {
       state.dark = !state.dark;
-      document.body.dataset.theme = state.dark ? 'dark' : '';
+      document.documentElement.dataset.theme = state.dark?'dark':'light';
       save();
     };
-    undoBtn.onclick = () => {
-      if (!state.lastRemoved) return;
-      state.grocery.splice(state.lastRemoved.idx, 0, state.lastRemoved.name);
-      state.lastRemoved = null;
-      undoBtn.disabled = true;
-      save(); renderGrocery();
+    undoBtn.onclick = ()=> {
+      if(!state.lastRemoved) return;
+      state.grocery.splice(state.lastRemoved.idx,0,state.lastRemoved);
+      state.lastRemoved=null; undoBtn.disabled=true;
+      save(); renderGrocery(); renderAvailable(searchInput.value);
     };
     copyBtn.onclick     = copyList;
-    whatsappBtn.onclick = () => shareURL('https://api.whatsapp.com/send?text=');
-    facebookBtn.onclick = () => shareURL('https://www.facebook.com/sharer/sharer.php?u=&quote=');
+    whatsappBtn.onclick = ()=> shareURL('https://api.whatsapp.com/send?text=');
+    facebookBtn.onclick = ()=> shareURL('https://www.facebook.com/sharer/sharer.php?u=&quote=');
 
-    document.body.dataset.theme = state.dark ? 'dark' : '';
+    searchInput.oninput = ()=> renderAvailable(searchInput.value);
+
+    // initialize
+    document.documentElement.dataset.theme = state.dark?'dark':'light';
     renderAvailable();
     renderGrocery();
   })();
