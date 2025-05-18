@@ -5,7 +5,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Grocery Manager</title>
   <style>
-    /* Original styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      color: #222;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    h1 {
+      color: #ff5722;
+      font-size: 2.5rem;
+    }
+    input, button {
+      margin: 10px 0;
+      padding: 15px 12px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+    input {
+      width: 100%;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #ff5722;
+      color: white;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #e64a19;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background: rgba(255, 255, 255, 0.9);
+      margin: 5px 0;
+      padding: 12px 15px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    li input[type="number"],
+    li input[type="text"] {
+      width: 70px;
+      padding: 8px;
+      margin: 5px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    #darkModeToggle {
+      background-color: #444;
+      margin-bottom: 15px;
+    }
+    #autocomplete {
+      position: absolute;
+      z-index: 1000;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: -8px;
+      width: calc(100% - 20px);
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    #autocomplete div {
+      padding: 10px;
+      cursor: pointer;
+    }
+    #autocomplete div:hover {
+      background-color: #f0f0f0;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    /* Dark mode styles */
+    body.dark {
+      background-color: #121212;
+      background-image: none;
+      color: #ddd;
+    }
+    body.dark h1 {
+      color: #ff8a50;
+    }
+    body.dark button {
+      background-color: #ff8a50;
+      color: #121212;
+    }
+    body.dark button:hover {
+      background-color: #ff5722;
+      color: white;
+    }
+    body.dark li {
+      background: #222;
+      color: #ddd;
+    }
+    body.dark li input[type="number"],
+    body.dark li input[type="text"] {
+      background: #333;
+      border: 1px solid #555;
+      color: #ddd;
+    }
+    body.dark #autocomplete div {
+      background-color: #222;
+      color: #ddd;
+    }
   </style>
 </head>
 <body>
@@ -15,17 +129,14 @@
     <input type="text" id="searchBar" placeholder="Search for items..." />
     <div id="autocomplete"></div>
   </div>
-  <button id="toggleAllBtn">Show All Items</button>
+  <div class="action-buttons">
+    <button id="toggleAllBtn">Show All Items</button>
+    <button id="copyBtn">Copy List</button>
+    <button id="shareBtn">Share List</button>
+  </div>
   <ul id="itemsList"></ul>
   <h2>Your List</h2>
   <ul id="addedList"></ul>
-
-  <!-- New Share Buttons -->
-  <div class="share-buttons">
-    <button class="share-whatsapp" id="shareWhatsapp">Share on WhatsApp</button>
-    <button class="share-facebook" id="shareFacebook">Share on Facebook</button>
-    <button class="copy-clipboard" id="copyClipboard">Copy to Clipboard</button>
-  </div>
 
   <script>
     const items = [
@@ -73,10 +184,22 @@
       { name: "Mozzarella bollar", quantity: 1, unit: "kartong" },
       { name: "Prochutto crudo", quantity: 1, unit: "ask" },
       { name: "Fryst lingon", quantity: 1, unit: "kartong" },
-      { name: "Crisp sallad", quantity: 1, unit: "st" },
+      { name: "Crisp sallad", quantity: 1, unit: "st" }
     ];
 
-    // Existing functionality and share button features
+    const searchBar = document.getElementById("searchBar");
+    const itemsList = document.getElementById("itemsList");
+    const addedList = document.getElementById("addedList");
+    const toggleAllBtn = document.getElementById("toggleAllBtn");
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    const copyBtn = document.getElementById("copyBtn");
+    const shareBtn = document.getElementById("shareBtn");
+
+    function renderItemsList() {
+      itemsList.innerHTML = items
+        .map(item => `<li>${item.name}</li>`)
+        .join('');
+    }
   </script>
 </body>
 </html>
