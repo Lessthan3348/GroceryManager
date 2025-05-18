@@ -1,146 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grocery Manager</title>
+  <!-- CSS Variables for Theming -->
   <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #222222;
+      --primary-color: #ff5722;
+      --input-bg: #f9f9f9;
+      --item-bg: rgba(255, 255, 255, 0.9);
+      --whatsapp-color: #25D366;
+      --facebook-color: #1877F2;
+      --copy-color: #555555;
+      --undo-color: #6666ff;
+    }
+    [data-theme="dark"] {
+      --bg-color: #121212;
+      --text-color: #dddddd;
+      --primary-color: #ff8a50;
+      --input-bg: #333333;
+      --item-bg: #222222;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1350&q=80');
-      background-size: cover;
-      background-position: center;
-      color: #222;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      background-image: linear-gradient(135deg, var(--bg-color) 0%, #e0e0e0 100%);
+      color: var(--text-color);
+      transition: background-color 0.3s, background-image 0.3s, color 0.3s;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
     }
-    h1 {
-      color: #ff5722;
-      font-size: 2.5rem;
-    }
-    input, button {
-      margin: 10px 0;
-      padding: 15px 12px;
-      border: none;
-      border-radius: 5px;
-      font-size: 1.1rem;
-      cursor: pointer;
-    }
-    input {
-      width: 100%;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    button {
-      background-color: #ff5722;
-      color: white;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
-    }
-    button:hover {
-      background-color: #e64a19;
-    }
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-    li {
-      background: rgba(255, 255, 255, 0.9);
-      margin: 5px 0;
-      padding: 12px 15px;
-      border-radius: 5px;
+    header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
     }
-    li input[type="number"],
-    li input[type="text"] {
-      width: 70px;
-      padding: 8px;
-      margin: 5px 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+    h1 { margin: 0.5rem 0; color: var(--primary-color); font-size: 2rem; }
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    button {
+      background: var(--primary-color);
+      color: #ffffff;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; transform: scale(1.05); }
+    .share-btn { font-weight: bold; }
+    .whatsapp { background: var(--whatsapp-color); color: #fff; }
+    .facebook { background: var(--facebook-color); color: #fff; }
+    .copy { background: var(--copy-color); color: #fff; }
+    .undo { background: var(--undo-color); color: #fff; }
+    .share-btn:hover { transform: scale(1.1); }
+    main { flex: 1; display: grid; grid-template-columns: 1fr; gap: 1rem; max-width: 800px; margin: 0 auto; width: 100%; }
+    .search-wrapper { position: relative; }
+    input[type="text"], input[type="number"] {
+      width: 100%; padding: 0.8rem;
+      border: 1px solid #cccccc;
+      border-radius: 0.5rem;
+      background: var(--input-bg);
+      color: var(--text-color);
       font-size: 1rem;
     }
-    #darkModeToggle {
-      background-color: #444;
-      margin-bottom: 15px;
-    }
-    #autocomplete {
-      position: absolute;
-      z-index: 1000;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      margin-top: -8px;
-      width: calc(100% - 20px);
-      max-height: 150px;
-      overflow-y: auto;
-    }
-    #autocomplete div {
-      padding: 10px;
-      cursor: pointer;
-    }
-    #autocomplete div:hover {
-      background-color: #f0f0f0;
-    }
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-    }
-    /* Dark mode styles */
-    body.dark {
-      background-color: #121212;
-      background-image: none;
-      color: #ddd;
-    }
-    body.dark h1 {
-      color: #ff8a50;
-    }
-    body.dark button {
-      background-color: #ff8a50;
-      color: #121212;
-    }
-    body.dark button:hover {
-      background-color: #ff5722;
-      color: white;
-    }
-    body.dark li {
-      background: #222;
-      color: #ddd;
-    }
-    body.dark li input[type="number"],
-    body.dark li input[type="text"] {
-      background: #333;
-      border: 1px solid #555;
-      color: #ddd;
-    }
-    body.dark #autocomplete div {
-      background-color: #222;
-      color: #ddd;
-    }
+    #autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: var(--item-bg); max-height: 150px; overflow-y: auto; border: 1px solid #cccccc; border-radius: 0 0 0.5rem 0.5rem; z-index: 10; }
+    #autocomplete div { padding: 0.5rem; cursor: pointer; }
+    #autocomplete div:hover { background: #eeeeee; }
+    #resultCount { font-size: 0.9rem; margin-top: 0.5rem; color: var(--text-color); }
+    ul { list-style: none; margin: 0; padding: 0; }
+    li.item { background: var(--item-bg); border-radius: 0.5rem; padding: 0.8rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .item-details { display: flex; gap: 0.5rem; align-items: center; }
+    .item-details input { width: 4rem; }
   </style>
 </head>
 <body>
-  <h1>Grocery Manager</h1>
-  <button id="darkModeToggle">Toggle Dark Mode</button>
-  <div style="position: relative;">
-    <input type="text" id="searchBar" placeholder="Search for items..." />
-    <div id="autocomplete"></div>
-  </div>
-  <div class="action-buttons">
-    <button id="toggleAllBtn">Show All Items</button>
-    <button id="copyBtn">Copy List</button>
-    <button id="shareBtn">Share List</button>
-  </div>
-  <ul id="itemsList"></ul>
-  <h2>Your List</h2>
-  <ul id="addedList"></ul>
+  <header>
+    <h1>Grocery Manager</h1>
+    <div class="controls">
+      <button id="darkToggle">Toggle Theme</button>
+      <button id="undoBtn" class="share-btn undo" disabled>Undo Remove</button>
+      <button id="copyBtn" class="share-btn copy">Copy List</button>
+      <button id="whatsappBtn" class="share-btn whatsapp">Share WhatsApp</button>
+      <button id="facebookBtn" class="share-btn facebook">Share Facebook</button>
+    </div>
+  </header>
+  <main>
+    <div class="search-wrapper">
+      <input type="text" id="search" placeholder="Search items..." autocomplete="off">
+      <div id="autocomplete" aria-live="polite"></div>
+      <p id="resultCount"></p>
+    </div>
+    <section>
+      <h2>Search Results</h2>
+      <ul id="availableList"></ul>
+    </section>
+    <section>
+      <h2>Your List</h2>
+      <ul id="groceryList"></ul>
+    </section>
+  </main>
 
   <script>
+  (() => {
     const items = [
-      { name: "Påse Napolitana salads mix", quantity: 1, unit: "pack" },
+      { name: "Påse Napolitana salads mix", quantity: 1, unit: "påse" },
       { name: "Tomat", quantity: 1, unit: "kg" },
       { name: "Championer", quantity: 1, unit: "kg" },
       { name: "Rödlök", quantity: 1, unit: "kg" },
@@ -158,7 +133,7 @@
       { name: "Rama grädde", quantity: 1, unit: "L" },
       { name: "Riven mozzarella ost", quantity: 1, unit: "påse" },
       { name: "Riven grano padano", quantity: 1, unit: "påse" },
-      { name: "Smör red label Arla", quantity: 500, unit: "g" },
+      { name: "Smör red label Arla", quantity: 2, unit: "x500g" },
       { name: "Bakad potatis", quantity: 15, unit: "st" },
       { name: "Spaghetti", quantity: 5, unit: "kg" },
       { name: "Chèvre rulle", quantity: 1, unit: "st" },
@@ -187,20 +162,147 @@
       { name: "Crisp sallad", quantity: 1, unit: "st" }
     ];
 
-    const searchBar = document.getElementById("searchBar");
-    const itemsList = document.getElementById("itemsList");
-    const addedList = document.getElementById("addedList");
-    const toggleAllBtn = document.getElementById("toggleAllBtn");
-    const darkModeToggle = document.getElementById("darkModeToggle");
-    const copyBtn = document.getElementById("copyBtn");
-    const shareBtn = document.getElementById("shareBtn");
+    const searchInput = document.getElementById('search');
+    const availableList = document.getElementById('availableList');
+    const groceryList = document.getElementById('groceryList');
+    const darkToggle = document.getElementById('darkToggle');
+    const undoBtn = document.getElementById('undoBtn');
+    const autocompleteBox = document.getElementById('autocomplete');
+    const resultCount = document.getElementById('resultCount');
+    const copyBtn = document.getElementById('copyBtn');
+    const whatsappBtn = document.getElementById('whatsappBtn');
+    const facebookBtn = document.getElementById('facebookBtn');
 
-    function renderItemsList() {
-      itemsList.innerHTML = items
-        .map(item => `<li>${item.name}</li>`)
-        .join('');
-    }
+    let state = {
+      // Pre-load all items unless overridden
+      grocery: JSON.parse(localStorage.getItem('grocery')) || items.slice(),
+      dark: JSON.parse(localStorage.getItem('dark')) || false,
+      lastRemoved: null
+    };
+
+    const saveState = () => {
+      localStorage.setItem('grocery', JSON.stringify(state.grocery));
+      localStorage.setItem('dark', JSON.stringify(state.dark));
+    };
+
+    const getListText = () =>
+      state.grocery.map(i => `${i.name} (${i.quantity} ${i.unit})`).join('\n');
+
+    const shareWhatsApp = () =>
+      window.open(
+        `https://api.whatsapp.com/send?text=${encodeURIComponent(getListText())}`,
+        '_blank'
+      );
+    const shareFacebook = () =>
+      window.open(
+        `https://www.facebook.com/sharer/sharer.php?u=&quote=${encodeURIComponent(getListText())}`,
+        '_blank'
+      );
+    const copyToClipboard = () => {
+      navigator.clipboard.writeText(getListText());
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => (copyBtn.textContent = 'Copy List'), 2000);
+    };
+
+    const undoRemove = () => {
+      if (state.lastRemoved) {
+        state.grocery.push(state.lastRemoved);
+        state.lastRemoved = null;
+        undoBtn.disabled = true;
+        saveState();
+        render();
+      }
+    };
+
+    const render = () => {
+      document.documentElement.setAttribute(
+        'data-theme',
+        state.dark ? 'dark' : ''
+      );
+      // Search results
+      availableList.innerHTML = '';
+      const query = searchInput.value.trim().toLowerCase();
+      const filtered = items.filter(
+        i =>
+          !state.grocery.find(g => g.name === i.name) &&
+          i.name.toLowerCase().includes(query)
+      );
+      resultCount.textContent = `Found ${filtered.length} items`;
+      filtered.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'item';
+        li.innerHTML = `<span>${item.name} (${item.quantity} ${item.unit})</span>
+                        <button data-add="${item.name}">Add</button>`;
+        availableList.appendChild(li);
+      });
+      if (filtered.length === 0)
+        availableList.innerHTML = '<li>No items found</li>';
+
+      // Grocery list
+      groceryList.innerHTML = '';
+      state.grocery.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = 'item';
+        li.innerHTML = `<span>${item.name}</span>
+                        <div class="item-details">
+                          <input type="number" data-idx="${idx}" data-field="quantity" value="${item.quantity}" min="0">
+                          <input type="text" data-idx="${idx}" data-field="unit" value="${item.unit}">
+                          <button data-remove="${item.name}">Remove</button>
+                        </div>`;
+        groceryList.appendChild(li);
+      });
+    };
+
+    const debounce = (fn, delay = 300) => {
+      let timer;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), delay);
+      };
+    };
+
+    // Event listeners
+    searchInput.addEventListener('input', debounce(render));
+    copyBtn.addEventListener('click', copyToClipboard);
+    whatsappBtn.addEventListener('click', shareWhatsApp);
+    facebookBtn.addEventListener('click', shareFacebook);
+    undoBtn.addEventListener('click', undoRemove);
+
+    document.body.addEventListener('click', e => {
+      const addName = e.target.dataset.add;
+      const removeName = e.target.dataset.remove;
+      if (addName) {
+        state.grocery.push({ ...items.find(i => i.name === addName) });
+        saveState();
+        render();
+      }
+      if (removeName) {
+        const removed = state.grocery.find(i => i.name === removeName);
+        state.lastRemoved = removed;
+        state.grocery = state.grocery.filter(i => i.name !== removeName);
+        undoBtn.disabled = false;
+        saveState();
+        render();
+      }
+      if (e.target === darkToggle) {
+        state.dark = !state.dark;
+        saveState();
+        render();
+      }
+    });
+
+    groceryList.addEventListener('change', e => {
+      const idx = e.target.dataset.idx;
+      const field = e.target.dataset.field;
+      if (idx != null && field) {
+        state.grocery[idx][field] = e.target.value;
+        saveState();
+      }
+    });
+
+    // Initial render
+    render();
+  })();
   </script>
 </body>
 </html>
-
