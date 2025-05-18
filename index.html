@@ -91,12 +91,12 @@
     </div>
 
     <div class="list" id="availableList">
-      <!-- Available items go here -->
+      <!-- Available items rendered here -->
     </div>
 
     <h2>Your List</h2>
     <div class="list" id="groceryList">
-      <!-- Your grocery items go here -->
+      <!-- Your grocery items rendered here -->
     </div>
   </div>
 
@@ -104,21 +104,50 @@
   (function(){
     const items = [
       "Påse Napolitana salads mix",
-      "Tomat", "Championer", "Rödlök", "Margarin flytande rama",
-      "Olivolja extra virgin", "Gurka ofilmad", "Citron",
-      "Handskalade räkor", "Granny Smith äpplen gröna",
-      "Ramlösa naturell i burk", "Coca Cola i burk", "Coca Cola Zero i burk",
-      "Standard mjölk", "Spray grädde", "Rama grädde",
-      "Riven mozzarella ost", "Riven grano padano", "Smör red label Arla",
-      "Bakad potatis", "Spaghetti", "Chèvre rulle",
-      "Mospotatis chefs cut", "Ruccola", "Lime",
-      "Basilika", "Färsk mynta", "Apelsin",
-      "Salami Milano", "Stenbitsrom", "Kokta ägg skalade",
-      "Jordnötter saltade", "Valnötskärnor", "Vitlökskrutonger",
-      "Grillad kycklingbröst fryst", "Dill", "Tvättad kul potatis",
-      "Roman huvuden", "Godmorgon apelsinjuice", "Godmorgon äpple juice",
-      "Sprite i burk", "Mozzarella bollar", "Prochutto crudo",
-      "Fryst lingon", "Crisp sallad"
+      "Tomat",
+      "Championer",
+      "Rödlök",
+      "Margarin flytande rama",
+      "Olivolja extra virgin",
+      "Gurka ofilmad",
+      "Citron",
+      "Handskalade räkor",
+      "Granny Smith äpplen gröna",
+      "Ramlösa naturell i burk",
+      "Coca Cola i burk",
+      "Coca Cola Zero i burk",
+      "Standard mjölk",
+      "Spray grädde",
+      "Rama grädde",
+      "Riven mozzarella ost",
+      "Riven grano padano",
+      "Smör red label Arla",
+      "Bakad potatis",
+      "Spaghetti",
+      "Chèvre rulle",
+      "Mospotatis chefs cut",
+      "Ruccola",
+      "Lime",
+      "Basilika",
+      "Färsk mynta",
+      "Apelsin",
+      "Salami Milano",
+      "Stenbitsrom",
+      "Kokta ägg skalade",
+      "Jordnötter saltade",
+      "Valnötskärnor",
+      "Vitlökskrutonger",
+      "Grillad kycklingbröst fryst",
+      "Dill",
+      "Tvättad kul potatis",
+      "Roman huvuden",
+      "Godmorgon apelsinjuice",
+      "Godmorgon äpple juice",
+      "Sprite i burk",
+      "Mozzarella bollar",
+      "Prochutto crudo",
+      "Fryst lingon",
+      "Crisp sallad"
     ];
 
     const availableList = document.getElementById('availableList');
@@ -145,10 +174,10 @@
       items.forEach(name => {
         const div = document.createElement('div');
         div.className = 'list-item';
-        div.innerHTML = \`
-          <span>\${name}</span>
+        div.innerHTML = `
+          <span>${name}</span>
           <button class="btn-add">Add</button>
-        \`;
+        `;
         div.querySelector('button').addEventListener('click', () => {
           state.grocery.push(name);
           save(); renderGrocery();
@@ -162,13 +191,13 @@
       state.grocery.forEach((name, idx) => {
         const div = document.createElement('div');
         div.className = 'list-item';
-        div.innerHTML = \`
-          <span>\${name}</span>
+        div.innerHTML = `
+          <span>${name}</span>
           <button class="btn-remove">Remove</button>
-        \`;
+        `;
         div.querySelector('button').addEventListener('click', () => {
           state.lastRemoved = { name, idx };
-          state.grocery.splice(idx,1);
+          state.grocery.splice(idx, 1);
           undoBtn.disabled = false;
           save(); renderGrocery();
         });
@@ -177,38 +206,38 @@
     }
 
     function getText() {
-      return state.grocery.join('\\n');
+      return state.grocery.join('\n');
     }
     function copyList() {
       navigator.clipboard.writeText(getText());
       copyBtn.textContent = 'Copied!';
-      setTimeout(()=> copyBtn.textContent='Copy List',1500);
+      setTimeout(() => copyBtn.textContent = 'Copy List', 1500);
     }
-    function shareURL(base){
+    function shareURL(base) {
       window.open(base + encodeURIComponent(getText()), '_blank');
     }
 
     darkToggle.onclick = () => {
       state.dark = !state.dark;
-      document.body.dataset.theme = state.dark ? 'dark':'';
+      document.body.dataset.theme = state.dark ? 'dark' : '';
       save();
     };
     undoBtn.onclick = () => {
       if (!state.lastRemoved) return;
-      state.grocery.splice(state.lastRemoved.idx,0,state.lastRemoved.name);
+      state.grocery.splice(state.lastRemoved.idx, 0, state.lastRemoved.name);
       state.lastRemoved = null;
       undoBtn.disabled = true;
       save(); renderGrocery();
     };
     copyBtn.onclick     = copyList;
-    whatsappBtn.onclick = ()=> shareURL('https://api.whatsapp.com/send?text=');
-    facebookBtn.onclick = ()=> shareURL('https://www.facebook.com/sharer/sharer.php?u=&quote=');
+    whatsappBtn.onclick = () => shareURL('https://api.whatsapp.com/send?text=');
+    facebookBtn.onclick = () => shareURL('https://www.facebook.com/sharer/sharer.php?u=&quote=');
 
-    // initialize
-    document.body.dataset.theme = state.dark ? 'dark':'';
+    document.body.dataset.theme = state.dark ? 'dark' : '';
     renderAvailable();
     renderGrocery();
   })();
   </script>
 </body>
 </html>
+
